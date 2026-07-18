@@ -284,7 +284,17 @@
     background: var(--bg-panel-2);
     box-shadow: 0 0 0 3px rgba(23,230,255,0.15);
   }
-  .movie-name-input{ font-weight: 700; font-size: 0.95rem; }
+  .movie-name-input{
+    font-weight: 700;
+    font-size: 0.95rem;
+    resize: none;
+    overflow: hidden;
+    min-height: 38px;
+    line-height: 1.35;
+    font-family: inherit;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 
   .starring-input{
     resize: none;
@@ -488,12 +498,12 @@
      on the Shared List. Everything else keeps working without it.
      ========================================================= */
   const firebaseConfig = {
-    apiKey: "AIzaSyBi8thIqn8pXhJpadem70XQ5bGZxvKcbLI",
-  authDomain: "movie-night-fe751.firebaseapp.com",
-  projectId: "movie-night-fe751",
-  storageBucket: "movie-night-fe751.firebasestorage.app",
-  messagingSenderId: "194384628313",
-  appId: "1:194384628313:web:fbf8dd26271a23907e7f48"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
   };
   const FIREBASE_CONFIGURED = !!(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY");
 
@@ -678,7 +688,7 @@
     }
     updateStats(list);
 
-    body.querySelectorAll('.starring-input').forEach(autoResize);
+    body.querySelectorAll('.starring-input, .movie-name-input').forEach(autoResize);
     restoreFocus(focusInfo);
 
     if(pendingFocusId){
@@ -695,13 +705,20 @@
     // Movie name
     const tdName = document.createElement('td');
     tdName.dataset.label = 'Movie';
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
+    const nameInput = document.createElement('textarea');
     nameInput.className = 'cell-input movie-name-input';
+    nameInput.rows = 1;
     nameInput.placeholder = 'Movie title…';
     nameInput.dataset.field = 'name';
     nameInput.value = movie.name || '';
-    nameInput.addEventListener('input', () => { movie.name = nameInput.value; schedulePersist(movie, 'name'); });
+    nameInput.addEventListener('input', () => {
+      autoResize(nameInput);
+      movie.name = nameInput.value;
+      schedulePersist(movie, 'name');
+    });
+    nameInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){ e.preventDefault(); nameInput.blur(); }
+    });
     tdName.appendChild(nameInput);
 
     // Starring (auto-growing textarea so long / multiple names are never cut off)
