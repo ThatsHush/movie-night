@@ -291,12 +291,118 @@
   .member-check-row{ display:flex; align-items:center; gap:10px; padding:7px 4px; font-size:0.88rem; }
   .member-check-row input{ width:16px; height:16px; accent-color: var(--magenta); }
 
+  .type-toggle{ display:flex; gap:8px; }
+  .type-choice{
+    flex:1; font-family:inherit; font-size:0.85rem; font-weight:600; padding:10px; border-radius:9px;
+    border:1px solid var(--border); background: var(--bg-panel-2); color: var(--text-dim); cursor:pointer;
+  }
+  .type-choice.selected{ color:#fff; background: linear-gradient(92deg, var(--magenta), var(--violet)); border-color: transparent; }
+
+  .current-member-row{ display:flex; align-items:center; gap:10px; padding:6px 4px; font-size:0.86rem; color: var(--text-dim); }
+  .current-member-row .avatar-circle{ width:28px; height:28px; font-size:0.9rem; cursor:default; }
+
   .setup-notice{
     max-width:640px; margin: 40px auto; background: var(--bg-panel); border:1px dashed var(--border); border-radius:16px;
     padding:26px; line-height:1.6; color: var(--text-dim); font-size:0.92rem;
   }
   .setup-notice b{ color: var(--text); }
   .setup-notice code{ background: rgba(255,255,255,0.08); padding:2px 6px; border-radius:6px; color: var(--azure); font-size:0.85em; }
+
+  .toast{
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--bg-panel); border:1px solid var(--border); color: var(--text);
+    padding: 12px 20px; border-radius: 12px; box-shadow: var(--shadow-lg); font-size:0.85rem;
+    opacity:0; pointer-events:none; transition: all 0.25s ease; z-index:80; max-width: 90vw;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Status dots ---------- */
+  .avatar-circle{ position:relative; overflow:visible; }
+  .avatar-circle img{ width:100%; height:100%; border-radius:50%; object-fit:cover; }
+  .status-dot{
+    position:absolute; width:11px; height:11px; border-radius:50%; bottom:-2px; right:-2px;
+    border:2px solid var(--bg-panel); box-sizing:content-box;
+  }
+  .status-dot.status-green{ background:#2ee66b; }
+  .status-dot.status-red{ background:#ff3b3b; }
+  .status-dot.status-purple{ background: var(--violet); }
+  .status-dot.status-grey{ background:#8a8a95; }
+  .status-picker{ display:flex; gap:6px; padding:8px 10px; }
+  .status-picker button{
+    flex:1; border:1px solid var(--border); background: var(--bg-panel-2); border-radius:8px; padding:6px;
+    cursor:pointer; font-size:0.75rem; color: var(--text-dim); display:flex; flex-direction:column; align-items:center; gap:3px;
+  }
+  .status-picker button.active{ border-color: var(--azure); color: var(--text); }
+  .status-picker .dot-preview{ width:10px; height:10px; border-radius:50%; }
+
+  /* ---------- Avatar picker (emoji vs DiceBear) ---------- */
+  .avatar-mode-toggle{ display:flex; gap:8px; margin-bottom:10px; }
+  .avatar-mode-toggle button{
+    flex:1; font-family:inherit; font-size:0.8rem; font-weight:600; padding:8px; border-radius:9px;
+    border:1px solid var(--border); background: var(--bg-panel-2); color: var(--text-dim); cursor:pointer;
+  }
+  .avatar-mode-toggle button.selected{ color:#fff; background: linear-gradient(92deg, var(--magenta), var(--violet)); border-color: transparent; }
+  .dicebear-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .dicebear-preview{ width:64px; height:64px; border-radius:50%; border:2px solid var(--border); overflow:hidden; flex-shrink:0; background: var(--bg-panel-2); }
+  .dicebear-preview img{ width:100%; height:100%; }
+  .dicebear-styles{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .dicebear-style-chip{
+    font-size:0.72rem; padding:6px 10px; border-radius:999px; border:1px solid var(--border);
+    background: var(--bg-panel-2); color: var(--text-dim); cursor:pointer;
+  }
+  .dicebear-style-chip.selected{ color:#fff; background: linear-gradient(92deg, var(--magenta), var(--violet)); border-color:transparent; }
+
+  /* ---------- Extended profile fields ---------- */
+  .field textarea{ min-height:70px; resize:vertical; }
+  .field-hint{ font-size:0.72rem; color: var(--text-dim); margin-top:4px; }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; }
+  .toggle-row .switch{ width:44px; height:24px; }
+  .toggle-row .switch .knob{ width:18px; height:18px; font-size:9px; }
+  .toggle-row.on .switch .knob{ left:22px; }
+
+  /* ---------- Now Watching / Discord ---------- */
+  .now-watching-chip{
+    display:flex; align-items:center; gap:6px; font-size:0.8rem; background: var(--bg-panel-2);
+    border:1px solid var(--border); border-radius:999px; padding:6px 12px;
+  }
+  .now-watching-chip .discord-link{ color: #7289da; text-decoration:none; font-size:1rem; line-height:1; }
+  .now-watching-clear{ background:none; border:none; color: var(--text-dim); cursor:pointer; font-size:0.9rem; }
+
+  /* ---------- Public profile screen ---------- */
+  .profile-page{ max-width: 620px; margin: 0 auto; }
+  .profile-header-card{
+    background: var(--bg-panel); border:1px solid var(--border); border-radius:18px; box-shadow: var(--shadow-lg);
+    padding: 26px; display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;
+  }
+  .profile-header-card .avatar-circle{ width:76px; height:76px; font-size:2.2rem; }
+  .profile-name-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .profile-name-row h2{ margin:0; }
+  .profile-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .profile-section{ margin-top:18px; }
+  .profile-section h4{ margin:0 0 6px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color: var(--text-dim); }
+  .profile-section p{ margin:0; font-size:0.92rem; line-height:1.6; white-space:pre-wrap; }
+  .profile-links{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .profile-links a{ color: var(--azure); text-decoration:none; font-size:0.85rem; }
+  .profile-links a:hover{ text-decoration:underline; }
+  .back-link{ display:inline-block; margin-bottom:16px; color: var(--text-dim); text-decoration:none; font-size:0.85rem; cursor:pointer; }
+  .back-link:hover{ color: var(--text); }
+
+  /* ---------- Inbox ---------- */
+  .conversation-row{
+    display:flex; align-items:center; gap:10px; padding:10px 6px; border-bottom:1px solid var(--border); cursor:pointer;
+  }
+  .conversation-row:last-child{ border-bottom:none; }
+  .conversation-row:hover{ background: var(--bg-panel-2); }
+  .conversation-row .preview{ flex:1; min-width:0; }
+  .conversation-row .preview .name{ font-weight:600; font-size:0.88rem; }
+  .conversation-row .preview .snippet{ font-size:0.78rem; color: var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .unread-dot{ width:8px; height:8px; border-radius:50%; background: var(--magenta); flex-shrink:0; }
+  .thread-messages{ max-height: 320px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding: 4px 2px; }
+  .msg-bubble{ max-width:80%; padding:9px 13px; border-radius:14px; font-size:0.86rem; line-height:1.4; }
+  .msg-bubble.mine{ align-self:flex-end; background: linear-gradient(92deg, var(--magenta), var(--violet)); color:#fff; }
+  .msg-bubble.theirs{ align-self:flex-start; background: var(--bg-panel-2); border:1px solid var(--border); }
+  .msg-reply-row{ display:flex; gap:8px; margin-top:12px; }
+  .msg-reply-row input{ flex:1; }
 
   @media (max-width: 720px){
     thead{ display:none; }
@@ -307,6 +413,8 @@
     .year-input{ width:100%; }
     td.actions-cell{ display:flex; justify-content:flex-end; }
     .avatar-grid{ grid-template-columns: repeat(5, 1fr); }
+    .profile-header-card{ flex-direction:column; align-items:center; text-align:center; }
+    .profile-actions{ justify-content:center; }
   }
 </style>
 </head>
@@ -353,22 +461,91 @@
       <p class="error-text" id="authError"></p>
       <button class="btn btn-primary btn-block" id="authSubmitBtn">Log In</button>
       <p class="toggle-link" id="authToggleLink">Need an account? Sign up</p>
+      <p class="toggle-link" id="forgotPasswordLink" style="margin-top:6px;">Forgot password?</p>
+
+      <div id="resetPanel" style="display:none; margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+        <div class="field">
+          <label>Email to send reset link to</label>
+          <input type="email" id="resetEmail" placeholder="you@example.com">
+        </div>
+        <p class="error-text" id="resetMsg"></p>
+        <button class="btn btn-primary btn-block" id="sendResetBtn">Send Reset Email</button>
+      </div>
     </div>
   </div>
 
   <!-- ============ Profile setup / edit ============ -->
   <div class="screen" id="profileSetup" style="display:none;">
-    <div class="card">
+    <div class="card" style="max-width:480px;">
       <h2 id="profileScreenTitle">Create Your Profile</h2>
       <p class="sub">Pick a name and an avatar so your Movie Buddies know it's you.</p>
       <div class="field">
         <label>Display name</label>
         <input type="text" id="profileName" placeholder="e.g. Sam" maxlength="30">
       </div>
+
       <div class="field">
         <label>Avatar</label>
-        <div class="avatar-grid" id="avatarGrid"></div>
+        <div class="avatar-mode-toggle" id="avatarModeToggle">
+          <button type="button" class="selected" data-mode="emoji">😀 Emoji</button>
+          <button type="button" data-mode="dicebear">🎨 Generated Avatar</button>
+        </div>
+        <div id="emojiAvatarSection">
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+        <div id="dicebearAvatarSection" style="display:none;">
+          <div class="dicebear-row">
+            <div class="dicebear-preview"><img id="dicebearPreviewImg" src="" alt="Avatar preview"></div>
+            <button class="btn btn-sm" id="dicebearShuffleBtn">🎲 Shuffle</button>
+          </div>
+          <div class="dicebear-styles" id="dicebearStyles"></div>
+          <p class="field-hint">Free, auto-generated avatars — no copyrighted characters, just for fun.</p>
+        </div>
       </div>
+
+      <div id="profileExtendedFields" style="display:none;">
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="profileBio" placeholder="A little about you (optional)" maxlength="300"></textarea>
+        </div>
+        <div class="field">
+          <label>Movies/shows you enjoy</label>
+          <input type="text" id="profileEnjoys" placeholder="e.g. horror, 90s comedies, anime" maxlength="200">
+        </div>
+        <div class="field">
+          <label>Recommendations</label>
+          <input type="text" id="profileRecs" placeholder="What do you recommend to others?" maxlength="200">
+        </div>
+        <div class="field">
+          <label>Want to watch next</label>
+          <input type="text" id="profileWantToWatch" placeholder="What's on your radar?" maxlength="200">
+        </div>
+        <div class="field">
+          <label>Contact email <span style="opacity:0.6;">(shown on your profile — separate from your login email)</span></label>
+          <input type="text" id="profileContactEmail" placeholder="optional@example.com">
+        </div>
+        <div class="field">
+          <label>Website</label>
+          <input type="text" id="profileWebsite" placeholder="https://…">
+        </div>
+        <div class="field">
+          <label>YouTube</label>
+          <input type="text" id="profileYoutube" placeholder="https://youtube.com/@…">
+        </div>
+        <div class="field">
+          <label>Discord invite</label>
+          <input type="text" id="profileDiscord" placeholder="https://discord.gg/…">
+        </div>
+        <div class="toggle-row" id="allowMessagesRow">
+          <div>
+            <div style="font-size:0.85rem; font-weight:600;">Allow messages from other users</div>
+            <div class="field-hint">You can change this any time.</div>
+          </div>
+          <div class="switch" id="allowMessagesSwitch"><div class="knob"></div></div>
+        </div>
+        <p class="field-hint" style="margin-bottom:14px;">Your email and login details are never shown to other users — only what you fill in above.</p>
+      </div>
+
       <p class="error-text" id="profileError"></p>
       <button class="btn btn-primary btn-block" id="profileSaveBtn">Create Profile &amp; Continue</button>
       <button class="btn btn-block" id="profileCancelBtn" style="display:none; margin-top:8px;">Cancel</button>
@@ -379,14 +556,32 @@
   <div id="appRoot" style="display:none;">
     <div class="user-bar">
       <div class="user-chip">
-        <div class="avatar-circle" id="userAvatarBtn">🎬</div>
+        <div class="avatar-circle" id="userAvatarBtn"><span id="userAvatarInner">🎬</span><span class="status-dot status-green" id="myStatusDot"></span></div>
         <button class="user-name-btn" id="userNameBtn">Loading…</button>
         <div class="user-menu" id="userMenu">
+          <div class="status-picker">
+            <button data-status="online" title="Online"><span class="dot-preview" style="background:#2ee66b;"></span>Online</button>
+            <button data-status="dnd" title="Busy / DND"><span class="dot-preview" style="background:#ff3b3b;"></span>Busy</button>
+            <button data-status="watching" title="Watching something"><span class="dot-preview" style="background:#9d3bff;"></span>Watching</button>
+            <button data-status="offline" title="Appear offline"><span class="dot-preview" style="background:#8a8a95;"></span>Offline</button>
+          </div>
+          <div class="field" style="padding: 6px 10px;">
+            <input type="text" id="customStatusInput" placeholder="Custom status (optional)" maxlength="60" style="font-size:0.8rem; padding:7px 9px;">
+          </div>
+          <button id="viewMyProfileBtn">👤 View My Profile</button>
           <button id="editProfileBtn">✎ Edit Profile</button>
+          <button id="changePasswordBtn">🔑 Change Password</button>
           <button id="logoutBtn">🚪 Log Out</button>
         </div>
       </div>
       <div class="actions-right">
+        <div class="now-watching-chip" id="nowWatchingChip" style="display:none;">
+          <span id="nowWatchingLabel"></span>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="discord-link" id="nowWatchingDiscord" style="display:none;" title="Join their Discord">🎮</a>
+          <button class="now-watching-clear" id="clearNowWatchingBtn" title="Clear">✕</button>
+        </div>
+        <button class="btn btn-sm" id="setNowWatchingBtn">▶️ Now Watching</button>
+        <button class="btn buddies-btn" id="inboxBtn">✉️ Inbox<span class="badge-dot" id="inboxBadge">0</span></button>
         <button class="btn buddies-btn" id="buddiesBtn">🦝 Movie Buddies<span class="badge-dot" id="incomingBadge">0</span></button>
       </div>
     </div>
@@ -462,6 +657,9 @@
     <div class="section-label">Your Buddies</div>
     <div id="friendsList"></div>
 
+    <div class="section-label">Blocked Users</div>
+    <div id="blockedList"></div>
+
     <div class="modal-close-row"><button class="btn" id="closeFriendsModal">Close</button></div>
   </div>
 </div>
@@ -469,14 +667,23 @@
 <!-- ============ New List modal ============ -->
 <div class="modal-overlay" id="newListModalOverlay">
   <div class="modal-card">
-    <h3>+ New Shared List</h3>
-    <p class="sub">Name it and pick which Movie Buddies can see and edit it.</p>
+    <h3>+ New List</h3>
+    <p class="sub">Personal lists are just for you. Shared lists sync with whichever Movie Buddies you invite.</p>
+    <div class="field">
+      <label>List type</label>
+      <div class="type-toggle" id="newListTypeToggle">
+        <button type="button" class="type-choice selected" data-type="personal">🔒 Personal</button>
+        <button type="button" class="type-choice" data-type="shared">🤝 Shared</button>
+      </div>
+    </div>
     <div class="field">
       <label>List name</label>
-      <input type="text" id="newListNameInput" placeholder="e.g. Date Night Picks" maxlength="40">
+      <input type="text" id="newListNameInput" placeholder="e.g. TV Shows to Binge" maxlength="40">
     </div>
-    <div class="section-label">Invite Movie Buddies</div>
-    <div id="newListFriendsCheckboxes"></div>
+    <div id="newListInviteSection" style="display:none;">
+      <div class="section-label">Invite Movie Buddies</div>
+      <div id="newListFriendsCheckboxes"></div>
+    </div>
     <p class="error-text" id="newListError"></p>
     <div class="modal-close-row">
       <button class="btn" id="closeNewListModal">Cancel</button>
@@ -485,7 +692,108 @@
   </div>
 </div>
 
+<!-- ============ Manage List Members modal ============ -->
+<div class="modal-overlay" id="manageMembersModalOverlay">
+  <div class="modal-card">
+    <h3>👥 Manage Members</h3>
+    <p class="sub" id="manageMembersListName"></p>
+    <div class="section-label">Currently in this list</div>
+    <div id="currentMembersList"></div>
+    <div class="section-label">Add more Movie Buddies</div>
+    <div id="addMembersCheckboxes"></div>
+    <p class="error-text" id="manageMembersError"></p>
+    <div class="modal-close-row">
+      <button class="btn" id="closeManageMembersModal">Close</button>
+      <button class="btn btn-primary" id="addMembersBtn" style="margin-left:8px;">Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Now Watching picker modal ============ -->
+<div class="modal-overlay" id="nowWatchingModalOverlay">
+  <div class="modal-card">
+    <h3>▶️ Now Watching</h3>
+    <p class="sub">Pick a title from your currently open list, or write a custom status.</p>
+    <div class="field">
+      <label>From "<span id="nowWatchingListName"></span>"</label>
+      <select class="cell-input" id="nowWatchingSelect"><option value="">— None —</option></select>
+    </div>
+    <div class="field">
+      <label>Or type something custom</label>
+      <input type="text" id="nowWatchingCustom" placeholder="e.g. Rewatching The Office" maxlength="60">
+    </div>
+    <p class="error-text" id="nowWatchingError"></p>
+    <div class="modal-close-row">
+      <button class="btn" id="closeNowWatchingModal">Cancel</button>
+      <button class="btn btn-primary" id="saveNowWatchingBtn" style="margin-left:8px;">Set Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Inbox modal ============ -->
+<div class="modal-overlay" id="inboxModalOverlay">
+  <div class="modal-card" style="max-width:480px;">
+    <h3 id="inboxTitle">✉️ Inbox</h3>
+    <p class="sub" id="inboxSub">Messages from other users.</p>
+    <div id="conversationListView">
+      <div id="conversationList"></div>
+    </div>
+    <div id="threadView" style="display:none;">
+      <p class="back-link" id="backToConversations">← Back to Inbox</p>
+      <div class="thread-messages" id="threadMessages"></div>
+      <div class="msg-reply-row">
+        <input type="text" id="threadReplyInput" placeholder="Type a message…" maxlength="500">
+        <button class="btn btn-primary btn-sm" id="threadReplyBtn">Send</button>
+      </div>
+      <p class="error-text" id="threadError"></p>
+    </div>
+    <div class="modal-close-row"><button class="btn" id="closeInboxModal">Close</button></div>
+  </div>
+</div>
+
+<!-- ============ Public profile screen ============ -->
+<div class="screen" id="publicProfileScreen" style="display:none;">
+  <div class="profile-page">
+    <p class="back-link" id="backFromProfile">← Back to my lists</p>
+    <div class="profile-header-card">
+      <div class="avatar-circle" id="publicProfileAvatar" style="width:76px;height:76px;font-size:2.2rem;"></div>
+      <div style="flex:1; min-width:200px;">
+        <div class="profile-name-row">
+          <h2 id="publicProfileName">—</h2>
+        </div>
+        <div class="now-watching-chip" id="publicNowWatchingChip" style="display:none; margin-top:8px;">
+          <span id="publicNowWatchingLabel"></span>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="discord-link" id="publicNowWatchingDiscord" style="display:none;">🎮</a>
+        </div>
+        <div class="profile-actions" id="publicProfileActions"></div>
+        <p class="error-text" id="publicProfileError"></p>
+      </div>
+    </div>
+
+    <div class="profile-section" id="publicBioSection" style="display:none;">
+      <h4>Bio</h4><p id="publicProfileBio"></p>
+    </div>
+    <div class="profile-section" id="publicEnjoysSection" style="display:none;">
+      <h4>Enjoys</h4><p id="publicProfileEnjoys"></p>
+    </div>
+    <div class="profile-section" id="publicRecsSection" style="display:none;">
+      <h4>Recommendations</h4><p id="publicProfileRecs"></p>
+    </div>
+    <div class="profile-section" id="publicWantSection" style="display:none;">
+      <h4>Wants to watch next</h4><p id="publicProfileWant"></p>
+    </div>
+    <div class="profile-section" id="publicLinksSection" style="display:none;">
+      <h4>Links</h4>
+      <div class="profile-links" id="publicProfileLinks"></div>
+    </div>
+    <div class="profile-section">
+      <button class="btn btn-sm" id="copyProfileLinkBtn">🔗 Copy profile link</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase -->
+<div class="toast" id="toast"></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -503,16 +811,43 @@
      FIREBASE SETUP — paste your project's config below.
      ========================================================= */
   const firebaseConfig = {
-    apiKey: "AIzaSyBi8thIqn8pXhJpadem70XQ5bGZxvKcbLI",
-  authDomain: "movie-night-fe751.firebaseapp.com",
-  projectId: "movie-night-fe751",
-  storageBucket: "movie-night-fe751.firebasestorage.app",
-  messagingSenderId: "194384628313",
-  appId: "1:194384628313:web:fbf8dd26271a23907e7f48"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
   };
   const FIREBASE_CONFIGURED = !!(firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY");
 
   const el = id => document.getElementById(id);
+
+  let toastTimer = null;
+  function showToast(msg){
+    const t = el('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  function usernameKeyOf(name){ return name.trim().toLowerCase(); }
+  function claimUsername(db2, name, uidVal){
+    const key = usernameKeyOf(name);
+    const ref = db2.collection('usernames').doc(key);
+    return db2.runTransaction(tx => tx.get(ref).then(doc => {
+      if(doc.exists && doc.data().uid !== uidVal) throw new Error('TAKEN');
+      tx.set(ref, { uid: uidVal, name: name.trim() });
+    })).then(() => key).catch(err => {
+      if(err && err.message === 'TAKEN') throw new Error('That display name is already taken — try another.');
+      throw new Error('That display name is already taken — try another.');
+    });
+  }
+  function releaseUsername(db2, key, uidVal){
+    if(!key) return Promise.resolve();
+    const ref = db2.collection('usernames').doc(key);
+    return ref.get().then(doc => { if(doc.exists && doc.data().uid === uidVal) return ref.delete(); }).catch(() => {});
+  }
 
   // ---------- Theme toggle (works regardless of login state) ----------
   const html = document.documentElement;
@@ -541,9 +876,13 @@
   const authScreen = el('authScreen');
   const profileSetup = el('profileSetup');
   const appRoot = el('appRoot');
-  function showAuthScreen(){ appRoot.style.display='none'; profileSetup.style.display='none'; authScreen.style.display='flex'; }
-  function showProfileScreen(){ authScreen.style.display='none'; appRoot.style.display='none'; profileSetup.style.display='flex'; }
-  function showApp(){ authScreen.style.display='none'; profileSetup.style.display='none'; appRoot.style.display='block'; }
+  const publicProfileScreen = el('publicProfileScreen');
+  function hideAllScreens(){
+    authScreen.style.display='none'; profileSetup.style.display='none'; appRoot.style.display='none'; publicProfileScreen.style.display='none';
+  }
+  function showAuthScreen(){ hideAllScreens(); authScreen.style.display='flex'; }
+  function showProfileScreen(){ hideAllScreens(); profileSetup.style.display='flex'; }
+  function showApp(){ hideAllScreens(); appRoot.style.display='block'; clearProfileUrlParam(); }
 
   /* ---------------- Auth screen logic ---------------- */
   let authMode = 'login';
@@ -583,37 +922,140 @@
   }
   el('authSubmitBtn').addEventListener('click', submitAuth);
   el('authPassword').addEventListener('keydown', e => { if(e.key === 'Enter') submitAuth(); });
+  el('forgotPasswordLink').addEventListener('click', () => {
+    const panel = el('resetPanel');
+    const showing = panel.style.display !== 'none';
+    panel.style.display = showing ? 'none' : 'block';
+    if(!showing){ el('resetEmail').value = el('authEmail').value.trim(); el('resetMsg').textContent = ''; }
+  });
+  el('sendResetBtn').addEventListener('click', () => {
+    const email = el('resetEmail').value.trim();
+    const msgEl = el('resetMsg');
+    msgEl.textContent = '';
+    msgEl.className = 'error-text';
+    if(!email){ msgEl.textContent = 'Enter your email first.'; return; }
+    el('sendResetBtn').disabled = true;
+    auth.sendPasswordResetEmail(email).then(() => {
+      msgEl.className = 'success-text';
+      msgEl.textContent = `Reset email sent to ${email} — check your inbox.`;
+    }).catch(err => { msgEl.textContent = friendlyAuthError(err); })
+      .finally(() => { el('sendResetBtn').disabled = false; });
+  });
   el('googleBtn').addEventListener('click', () => {
     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .catch(err => { el('authError').textContent = friendlyAuthError(err); });
   });
 
   /* ---------------- Profile setup / edit ---------------- */
+  const DICEBEAR_STYLES = [
+    { key: 'adventurer', label: 'Adventurer' },
+    { key: 'bottts', label: 'Bots' },
+    { key: 'pixel-art', label: 'Pixel Art' },
+    { key: 'personas', label: 'Personas' },
+    { key: 'fun-emoji', label: 'Fun Emoji' },
+    { key: 'thumbs', label: 'Thumbs' }
+  ];
+  function dicebearUrl(style, seed){ return `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}`; }
+
   let selectedAvatar = null;
+  let avatarMode = 'emoji';
+  let dicebearStyle = 'adventurer';
+  let dicebearSeed = '';
   let isEditingProfile = false;
+
   function buildAvatarGrid(){
     const grid = el('avatarGrid');
     grid.innerHTML = '';
     AVATARS.forEach(a => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'avatar-choice' + (a === selectedAvatar ? ' selected' : '');
+      btn.className = 'avatar-choice' + (avatarMode === 'emoji' && a === selectedAvatar ? ' selected' : '');
       btn.textContent = a;
-      btn.addEventListener('click', () => { selectedAvatar = a; buildAvatarGrid(); });
+      btn.addEventListener('click', () => { avatarMode = 'emoji'; selectedAvatar = a; buildAvatarGrid(); });
       grid.appendChild(btn);
     });
+  }
+  function buildDicebearStyleChips(){
+    const wrap = el('dicebearStyles');
+    wrap.innerHTML = '';
+    DICEBEAR_STYLES.forEach(s => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'dicebear-style-chip' + (s.key === dicebearStyle ? ' selected' : '');
+      chip.textContent = s.label;
+      chip.addEventListener('click', () => { dicebearStyle = s.key; buildDicebearStyleChips(); updateDicebearPreview(); });
+      wrap.appendChild(chip);
+    });
+  }
+  function updateDicebearPreview(){
+    if(!dicebearSeed) dicebearSeed = Math.random().toString(36).slice(2, 10);
+    selectedAvatar = dicebearUrl(dicebearStyle, dicebearSeed);
+    el('dicebearPreviewImg').src = selectedAvatar;
+  }
+  el('dicebearShuffleBtn').addEventListener('click', () => {
+    dicebearSeed = Math.random().toString(36).slice(2, 10);
+    updateDicebearPreview();
+  });
+  buildDicebearStyleChips();
+
+  document.querySelectorAll('#avatarModeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      avatarMode = btn.dataset.mode;
+      document.querySelectorAll('#avatarModeToggle button').forEach(b => b.classList.toggle('selected', b === btn));
+      el('emojiAvatarSection').style.display = avatarMode === 'emoji' ? 'block' : 'none';
+      el('dicebearAvatarSection').style.display = avatarMode === 'dicebear' ? 'block' : 'none';
+      if(avatarMode === 'dicebear') updateDicebearPreview();
+      else buildAvatarGrid();
+    });
+  });
+
+  // Renders an avatar (emoji or DiceBear image) into any container that expects inner HTML
+  function avatarInnerHtml(profile){
+    if(profile && profile.avatarType === 'dicebear' && profile.avatar){
+      return `<img src="${profile.avatar}" alt="" style="width:100%;height:100%;border-radius:50%;">`;
+    }
+    return escapeHtml((profile && profile.avatar) || '🎬');
   }
   function openProfileScreen(editing){
     isEditingProfile = editing;
     el('profileScreenTitle').textContent = editing ? 'Edit Your Profile' : 'Create Your Profile';
     el('profileSaveBtn').textContent = editing ? 'Save Changes' : 'Create Profile & Continue';
     el('profileCancelBtn').style.display = editing ? 'inline-block' : 'none';
-    el('profileName').value = editing && currentProfile ? currentProfile.name : '';
-    selectedAvatar = editing && currentProfile ? currentProfile.avatar : null;
-    el('profileError').textContent = '';
+    el('profileExtendedFields').style.display = 'block';
+    const p = editing && currentProfile ? currentProfile : null;
+    el('profileName').value = p ? p.name : '';
+    el('profileBio').value = p ? (p.bio || '') : '';
+    el('profileEnjoys').value = p ? (p.enjoys || '') : '';
+    el('profileRecs').value = p ? (p.recs || '') : '';
+    el('profileWantToWatch').value = p ? (p.wantToWatch || '') : '';
+    el('profileContactEmail').value = p ? (p.contactEmail || '') : '';
+    el('profileWebsite').value = p ? (p.website || '') : '';
+    el('profileYoutube').value = p ? (p.youtube || '') : '';
+    el('profileDiscord').value = p ? (p.discordInvite || '') : '';
+    const allowMsgs = !p || p.messagePolicy !== 'deny';
+    el('allowMessagesRow').classList.toggle('on', allowMsgs);
+    el('allowMessagesSwitch').dataset.allow = allowMsgs ? '1' : '0';
+
+    avatarMode = (p && p.avatarType === 'dicebear') ? 'dicebear' : 'emoji';
+    selectedAvatar = p ? p.avatar : null;
+    dicebearSeed = (p && p.avatarType === 'dicebear') ? '' : '';
+    dicebearStyle = 'adventurer';
+    document.querySelectorAll('#avatarModeToggle button').forEach(b => b.classList.toggle('selected', b.dataset.mode === avatarMode));
+    el('emojiAvatarSection').style.display = avatarMode === 'emoji' ? 'block' : 'none';
+    el('dicebearAvatarSection').style.display = avatarMode === 'dicebear' ? 'block' : 'none';
+    if(avatarMode === 'dicebear' && selectedAvatar){ el('dicebearPreviewImg').src = selectedAvatar; }
+    else if(avatarMode === 'dicebear'){ updateDicebearPreview(); }
     buildAvatarGrid();
+
+    el('profileError').textContent = '';
     showProfileScreen();
   }
+  el('allowMessagesSwitch').addEventListener('click', function(){
+    const row = el('allowMessagesRow');
+    const nowOn = this.dataset.allow !== '1';
+    this.dataset.allow = nowOn ? '1' : '0';
+    row.classList.toggle('on', nowOn);
+  });
   el('profileCancelBtn').addEventListener('click', () => showApp());
 
   function generateFriendCode(){
@@ -640,26 +1082,50 @@
     if(!selectedAvatar){ errEl.textContent = 'Please pick an avatar.'; return; }
     el('profileSaveBtn').disabled = true;
 
+    const extended = {
+      bio: el('profileBio').value.trim(),
+      enjoys: el('profileEnjoys').value.trim(),
+      recs: el('profileRecs').value.trim(),
+      wantToWatch: el('profileWantToWatch').value.trim(),
+      contactEmail: el('profileContactEmail').value.trim(),
+      website: el('profileWebsite').value.trim(),
+      youtube: el('profileYoutube').value.trim(),
+      discordInvite: el('profileDiscord').value.trim(),
+      messagePolicy: el('allowMessagesSwitch').dataset.allow === '0' ? 'deny' : 'allow',
+      avatarType: avatarMode
+    };
+
     if(isEditingProfile){
-      db.collection('users').doc(currentUser.uid).update({ name, avatar: selectedAvatar })
-        .then(() => {
-          currentProfile.name = name; currentProfile.avatar = selectedAvatar;
-          updateHeaderUI();
-          showApp();
-        })
+      const oldKey = currentProfile.usernameKey || usernameKeyOf(currentProfile.name || '');
+      const newKey = usernameKeyOf(name);
+      const nameChanged = oldKey !== newKey;
+      (nameChanged ? claimUsername(db, name, currentUser.uid) : Promise.resolve(oldKey)).then(key => {
+        return db.collection('users').doc(currentUser.uid).update(Object.assign({ name, avatar: selectedAvatar, usernameKey: key }, extended))
+          .then(() => { if(nameChanged) return releaseUsername(db, oldKey, currentUser.uid); })
+          .then(() => {
+            Object.assign(currentProfile, { name, avatar: selectedAvatar, usernameKey: key }, extended);
+            updateHeaderUI();
+            showApp();
+            showToast('Profile updated!');
+          });
+      })
         .catch(err => { errEl.textContent = err.message; })
         .finally(() => { el('profileSaveBtn').disabled = false; });
     } else {
-      ensureUniqueFriendCode().then(code => {
-        const batch = db.batch();
-        batch.set(db.collection('users').doc(currentUser.uid), { name, avatar: selectedAvatar, friendCode: code, createdAt: Date.now() });
-        batch.set(db.collection('friendCodes').doc(code), { uid: currentUser.uid });
-        return batch.commit().then(() =>
-          db.collection('lists').add({ name: 'My List', type: 'personal', ownerUid: currentUser.uid, memberUids: [currentUser.uid], createdAt: Date.now() })
-        ).then(() => {
-          currentProfile = { name, avatar: selectedAvatar, friendCode: code };
-          showApp();
-          subscribeAll();
+      claimUsername(db, name, currentUser.uid).then(key => {
+        return ensureUniqueFriendCode().then(code => {
+          const batch = db.batch();
+          batch.set(db.collection('users').doc(currentUser.uid), Object.assign(
+            { name, avatar: selectedAvatar, friendCode: code, usernameKey: key, status: 'online', createdAt: Date.now() }, extended
+          ));
+          batch.set(db.collection('friendCodes').doc(code), { uid: currentUser.uid });
+          return batch.commit().then(() =>
+            db.collection('lists').add({ name: 'My List', type: 'personal', ownerUid: currentUser.uid, memberUids: [currentUser.uid], createdAt: Date.now() })
+          ).then(() => {
+            currentProfile = Object.assign({ name, avatar: selectedAvatar, friendCode: code, usernameKey: key, status: 'online' }, extended);
+            showApp();
+            subscribeAll();
+          });
         });
       }).catch(err => { errEl.textContent = err.message; })
         .finally(() => { el('profileSaveBtn').disabled = false; });
@@ -675,26 +1141,91 @@
   let movies = [];
   let friends = [];
   let incomingRequests = [];
+  let blockedUsers = [];
   let pendingFocusId = null;
 
-  let listsUnsub = null, moviesUnsub = null, friendshipsUnsub = null, incomingUnsub = null;
+  let listsUnsub = null, moviesUnsub = null, friendshipsUnsub = null, incomingUnsub = null, blockedUnsub = null, sentMsgUnsub = null, receivedMsgUnsub = null;
+  let allMessages = [];
+  let activeThreadUid = null;
 
-  function updateHeaderUI(){
-    el('userAvatarBtn').textContent = currentProfile.avatar;
-    el('userNameBtn').textContent = currentProfile.name;
+  function statusColorClass(status){
+    if(status === 'dnd') return 'red';
+    if(status === 'watching') return 'purple';
+    if(status === 'offline') return 'grey';
+    return 'green';
   }
+  function updateMyStatusDot(){
+    const dot = el('myStatusDot');
+    dot.className = 'status-dot status-' + statusColorClass((currentProfile && currentProfile.status) || 'online');
+  }
+  function updateHeaderUI(){
+    el('userAvatarInner').innerHTML = avatarInnerHtml(currentProfile);
+    el('userNameBtn').textContent = currentProfile.name;
+    updateMyStatusDot();
+    updateNowWatchingChip();
+  }
+
+  /* ---------- Status picker ---------- */
+  document.querySelectorAll('.status-picker button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const status = btn.dataset.status;
+      db.collection('users').doc(currentUser.uid).update({ status }).then(() => {
+        currentProfile.status = status;
+        updateMyStatusDot();
+        showToast('Status updated!');
+      }).catch(err => alert(err.message));
+    });
+  });
+  let customStatusTimer = null;
+  el('customStatusInput').addEventListener('input', () => {
+    clearTimeout(customStatusTimer);
+    const val = el('customStatusInput').value;
+    customStatusTimer = setTimeout(() => {
+      db.collection('users').doc(currentUser.uid).update({ customStatus: val }).then(() => { currentProfile.customStatus = val; });
+    }, 600);
+  });
 
   /* ---------- User menu ---------- */
   const userMenu = el('userMenu');
-  el('userAvatarBtn').addEventListener('click', () => userMenu.classList.toggle('open'));
-  el('userNameBtn').addEventListener('click', () => userMenu.classList.toggle('open'));
+  function openUserMenu(){
+    el('customStatusInput').value = (currentProfile && currentProfile.customStatus) || '';
+    userMenu.classList.toggle('open');
+  }
+  el('userAvatarBtn').addEventListener('click', openUserMenu);
+  el('userNameBtn').addEventListener('click', openUserMenu);
   document.addEventListener('click', e => {
     if(!e.target.closest('.user-chip')) userMenu.classList.remove('open');
   });
   el('editProfileBtn').addEventListener('click', () => { userMenu.classList.remove('open'); openProfileScreen(true); });
+  el('changePasswordBtn').addEventListener('click', () => {
+    userMenu.classList.remove('open');
+    if(!currentUser.email){ alert("Your account signed in with Google, so there's no password to change here — manage it through your Google account instead."); return; }
+    const newPw = prompt('Enter a new password (at least 6 characters):');
+    if(!newPw) return;
+    if(newPw.length < 6){ alert('Password should be at least 6 characters.'); return; }
+    currentUser.updatePassword(newPw).then(() => {
+      showToast('Password changed!');
+    }).catch(err => {
+      if(err.code === 'auth/requires-recent-login'){
+        const currentPw = prompt('For security, please re-enter your current password to continue:');
+        if(!currentPw) return;
+        const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPw);
+        currentUser.reauthenticateWithCredential(cred).then(() => currentUser.updatePassword(newPw)).then(() => {
+          showToast('Password changed!');
+        }).catch(err2 => alert(friendlyAuthError(err2)));
+      } else {
+        alert(friendlyAuthError(err));
+      }
+    });
+  });
+  el('viewMyProfileBtn').addEventListener('click', () => { userMenu.classList.remove('open'); openPublicProfile(currentUser.uid); });
   el('logoutBtn').addEventListener('click', () => { userMenu.classList.remove('open'); auth.signOut(); });
 
   /* ---------------- Auth state ---------------- */
+  function getProfileUidFromUrl(){
+    const params = new URLSearchParams(location.search);
+    return params.get('u');
+  }
   auth.onAuthStateChanged(user => {
     if(user){
       currentUser = user;
@@ -702,28 +1233,33 @@
         if(doc.exists){
           currentProfile = doc.data();
           updateHeaderUI();
-          showApp();
           subscribeAll();
+          const targetUid = getProfileUidFromUrl();
+          if(targetUid){ openPublicProfile(targetUid); }
+          else { showApp(); }
         } else {
           openProfileScreen(false);
         }
       });
     } else {
-      [listsUnsub, moviesUnsub, friendshipsUnsub, incomingUnsub].forEach(u => { try{ u && u(); }catch(e){} });
-      listsUnsub = moviesUnsub = friendshipsUnsub = incomingUnsub = null;
+      [listsUnsub, moviesUnsub, friendshipsUnsub, incomingUnsub, blockedUnsub, sentMsgUnsub, receivedMsgUnsub].forEach(u => { try{ u && u(); }catch(e){} });
+      listsUnsub = moviesUnsub = friendshipsUnsub = incomingUnsub = blockedUnsub = sentMsgUnsub = receivedMsgUnsub = null;
       currentUser = null; currentProfile = null;
-      lists = []; movies = []; friends = []; incomingRequests = [];
+      lists = []; movies = []; friends = []; incomingRequests = []; blockedUsers = []; allMessages = []; activeThreadUid = null;
       activeListId = null; lastSubscribedListId = undefined;
       updateAuthUI();
       showAuthScreen();
     }
   });
 
+
   /* ---------------- Subscriptions ---------------- */
   function subscribeAll(){
     subscribeLists();
     subscribeFriendships();
     subscribeIncomingRequests();
+    subscribeBlocked();
+    subscribeMessages();
   }
 
   function subscribeLists(){
@@ -768,7 +1304,7 @@
         const data = d.data();
         const otherUid = (data.uids || []).find(u => u !== currentUser.uid);
         const prof = (data.profiles && data.profiles[otherUid]) || { name: 'Friend', avatar: '🎬' };
-        return { docId: d.id, uid: otherUid, name: prof.name, avatar: prof.avatar };
+        return { docId: d.id, uid: otherUid, name: prof.name, avatar: prof.avatar, avatarType: prof.avatarType };
       });
       renderFriendsUI();
     }, err => console.error('friendships sync error', err));
@@ -791,10 +1327,332 @@
     else { badge.style.display = 'none'; }
   }
 
+  function subscribeBlocked(){
+    if(blockedUnsub) blockedUnsub();
+    blockedUnsub = db.collection('blocks').where('blockerUid', '==', currentUser.uid).onSnapshot(snap => {
+      blockedUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFriendsUI();
+    }, err => console.error('blocks sync error', err));
+  }
+
+  function blockUser(uidVal, name, avatar, avatarType){
+    if(!confirm(`Block ${name}? They won't be able to send you Movie Buddy requests, and you'll stop being Movie Buddies.`)) return;
+    db.collection('blocks').doc(`${currentUser.uid}_${uidVal}`).set({
+      blockerUid: currentUser.uid, blockedUid: uidVal, name: name || 'User', avatar: avatar || '🎬', avatarType: avatarType || 'emoji', createdAt: Date.now()
+    }).then(() => {
+      const pairId = [currentUser.uid, uidVal].sort().join('_');
+      db.collection('friendships').doc(pairId).delete().catch(() => {});
+      showToast(`Blocked ${name}.`);
+    }).catch(err => alert(err.message));
+  }
+
+  function unblockUser(blockDocId, name){
+    db.collection('blocks').doc(blockDocId).delete()
+      .then(() => showToast(`Unblocked ${name || 'user'}.`))
+      .catch(err => alert(err.message));
+  }
+
+  /* ---------------- Messaging ---------------- */
+  function subscribeMessages(){
+    if(sentMsgUnsub) sentMsgUnsub();
+    if(receivedMsgUnsub) receivedMsgUnsub();
+    let sentMsgs = [], receivedMsgs = [];
+    function rebuild(){
+      allMessages = sentMsgs.concat(receivedMsgs).sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+      updateInboxBadge();
+      if(inboxModalOverlay.classList.contains('open')) renderInbox();
+    }
+    sentMsgUnsub = db.collection('messages').where('fromUid', '==', currentUser.uid).onSnapshot(snap => {
+      sentMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() })); rebuild();
+    }, err => console.error('sent messages sync error', err));
+    receivedMsgUnsub = db.collection('messages').where('toUid', '==', currentUser.uid).onSnapshot(snap => {
+      receivedMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() })); rebuild();
+    }, err => console.error('received messages sync error', err));
+  }
+
+  function updateInboxBadge(){
+    const unreadCount = allMessages.filter(m => m.toUid === currentUser.uid && !m.read).length;
+    const badge = el('inboxBadge');
+    if(unreadCount > 0){ badge.style.display = 'flex'; badge.textContent = unreadCount; }
+    else { badge.style.display = 'none'; }
+  }
+
+  function conversationPartners(){
+    const map = {};
+    allMessages.forEach(m => {
+      const otherUid = m.fromUid === currentUser.uid ? m.toUid : m.fromUid;
+      const otherName = m.fromUid === currentUser.uid ? m.toName : m.fromName;
+      const otherAvatar = m.fromUid === currentUser.uid ? m.toAvatar : m.fromAvatar;
+      const otherAvatarType = m.fromUid === currentUser.uid ? m.toAvatarType : m.fromAvatarType;
+      if(!map[otherUid] || (map[otherUid].lastAt || 0) < (m.createdAt || 0)){
+        map[otherUid] = { uid: otherUid, name: otherName || 'User', avatar: otherAvatar || '🎬', avatarType: otherAvatarType, lastAt: m.createdAt || 0, lastBody: m.body };
+      }
+    });
+    Object.keys(map).forEach(uidKey => {
+      map[uidKey].unread = allMessages.some(m => m.fromUid === uidKey && m.toUid === currentUser.uid && !m.read);
+    });
+    return Object.values(map).sort((a,b) => b.lastAt - a.lastAt);
+  }
+
+  const inboxModalOverlay = el('inboxModalOverlay');
+  function renderInbox(){
+    if(activeThreadUid){ renderThread(activeThreadUid); return; }
+    el('conversationListView').style.display = 'block';
+    el('threadView').style.display = 'none';
+    const wrap = el('conversationList');
+    wrap.innerHTML = '';
+    const partners = conversationPartners();
+    if(partners.length === 0){ wrap.innerHTML = '<div class="empty-mini">No messages yet.</div>'; return; }
+    partners.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'friend-row';
+      row.style.cursor = 'pointer';
+      row.innerHTML = `<div class="friend-identity"><div class="avatar-circle" style="width:32px;height:32px;font-size:1rem;">${avatarInnerHtml(p)}</div><span>${escapeHtml(p.name)}${p.unread ? ' 🔵' : ''}</span></div>`;
+      row.addEventListener('click', () => openThread(p.uid, p.name, p.avatar));
+      wrap.appendChild(row);
+    });
+  }
+  function openThread(otherUid, otherName){
+    activeThreadUid = otherUid;
+    el('conversationListView').style.display = 'none';
+    el('threadView').style.display = 'block';
+    el('inboxTitle').textContent = '✉️ ' + (otherName || 'Conversation');
+    renderThread(otherUid);
+    allMessages.filter(m => m.fromUid === otherUid && m.toUid === currentUser.uid && !m.read).forEach(m => {
+      db.collection('messages').doc(m.id).update({ read: true }).catch(() => {});
+    });
+  }
+  function renderThread(otherUid){
+    const wrap = el('threadMessages');
+    wrap.innerHTML = '';
+    const thread = allMessages.filter(m => m.fromUid === otherUid || m.toUid === otherUid);
+    thread.forEach(m => {
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble ' + (m.fromUid === currentUser.uid ? 'mine' : 'theirs');
+      bubble.textContent = m.body;
+      wrap.appendChild(bubble);
+    });
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+  el('backToConversations').addEventListener('click', () => { activeThreadUid = null; el('inboxTitle').textContent = '✉️ Inbox'; renderInbox(); });
+
+  function sendMessageTo(targetUid, body){
+    return db.collection('users').doc(targetUid).get().then(doc => {
+      if(!doc.exists) throw new Error('This user could not be found.');
+      const targetData = doc.data();
+      if(targetData.messagePolicy === 'deny') throw new Error("This user isn't accepting messages right now.");
+      return db.collection('messages').add({
+        fromUid: currentUser.uid, fromName: currentProfile.name, fromAvatar: currentProfile.avatar, fromAvatarType: currentProfile.avatarType || 'emoji',
+        toUid: targetUid, toName: targetData.name || 'User', toAvatar: targetData.avatar || '🎬', toAvatarType: targetData.avatarType || 'emoji',
+        body, read: false, createdAt: Date.now()
+      });
+    });
+  }
+  el('threadReplyBtn').addEventListener('click', () => {
+    const body = el('threadReplyInput').value.trim();
+    const errEl = el('threadError');
+    errEl.textContent = '';
+    if(!body || !activeThreadUid) return;
+    el('threadReplyBtn').disabled = true;
+    sendMessageTo(activeThreadUid, body).then(() => { el('threadReplyInput').value = ''; })
+      .catch(err => { errEl.textContent = err.message; })
+      .finally(() => { el('threadReplyBtn').disabled = false; });
+  });
+  el('threadReplyInput').addEventListener('keydown', e => { if(e.key === 'Enter') el('threadReplyBtn').click(); });
+
+  function openComposeTo(targetUid, profileData){
+    inboxModalOverlay.classList.add('open');
+    openThread(targetUid, profileData && profileData.name);
+  }
+
+  el('inboxBtn').addEventListener('click', () => { activeThreadUid = null; el('inboxTitle').textContent = '✉️ Inbox'; inboxModalOverlay.classList.add('open'); renderInbox(); });
+  el('closeInboxModal').addEventListener('click', () => inboxModalOverlay.classList.remove('open'));
+  inboxModalOverlay.addEventListener('click', e => { if(e.target === inboxModalOverlay) inboxModalOverlay.classList.remove('open'); });
+
+  /* ---------------- Public profile page ---------------- */
+  function clearProfileUrlParam(){
+    if(location.search.includes('u=')){
+      const url = new URL(location.href);
+      url.searchParams.delete('u');
+      history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+    }
+  }
+  function openPublicProfile(targetUid){
+    hideAllScreens();
+    publicProfileScreen.style.display = 'block';
+    const url = new URL(location.href);
+    url.searchParams.set('u', targetUid);
+    history.replaceState({}, '', url.pathname + '?' + url.searchParams.toString());
+    renderPublicProfile(targetUid);
+  }
+  let currentPublicProfileUid = null;
+  function sendFriendRequestTo(targetUid){
+    if(targetUid === currentUser.uid) return;
+    if(friends.find(f => f.uid === targetUid)){ showToast("You're already Movie Buddies!"); return; }
+    Promise.all([
+      db.collection('blocks').doc(`${currentUser.uid}_${targetUid}`).get(),
+      db.collection('blocks').doc(`${targetUid}_${currentUser.uid}`).get()
+    ]).then(([b1, b2]) => {
+      if(b1.exists){ showToast("You've blocked this user."); return; }
+      if(b2.exists){ showToast("This request can't be sent."); return; }
+      const already = incomingRequests.find(r => r.fromUid === targetUid);
+      if(already){ acceptRequest(already); showToast("You're now Movie Buddies! 🎉"); return; }
+      db.collection('friendRequests').where('fromUid', '==', currentUser.uid).where('toUid', '==', targetUid).where('status', '==', 'pending')
+        .get().then(qs => {
+          if(!qs.empty){ showToast('Request already sent — waiting on them to accept.'); return; }
+          db.collection('friendRequests').add({
+            fromUid: currentUser.uid, fromName: currentProfile.name, fromAvatar: currentProfile.avatar, fromAvatarType: currentProfile.avatarType || 'emoji',
+            toUid: targetUid, status: 'pending', createdAt: Date.now()
+          }).then(() => showToast('Buddy request sent!'));
+        });
+    }).catch(err => showToast(err.message));
+  }
+  function renderPublicProfile(targetUid){
+    currentPublicProfileUid = targetUid;
+    el('publicProfileError').textContent = '';
+    el('publicProfileName').textContent = 'Loading…';
+    el('publicProfileActions').innerHTML = '';
+    db.collection('users').doc(targetUid).get().then(doc => {
+      if(!doc.exists){ el('publicProfileError').textContent = 'This user could not be found.'; el('publicProfileName').textContent = 'Unknown'; return; }
+      const data = doc.data();
+      el('publicProfileAvatar').innerHTML = avatarInnerHtml(data);
+      el('publicProfileName').textContent = data.name || 'Movie Buddy';
+
+      const chip = el('publicNowWatchingChip');
+      if(data.nowWatching){
+        chip.style.display = 'inline-flex';
+        el('publicNowWatchingLabel').textContent = '▶️ ' + data.nowWatching;
+        const discBtn = el('publicNowWatchingDiscord');
+        if(data.discordInvite){ discBtn.style.display = 'inline-block'; discBtn.href = data.discordInvite; }
+        else { discBtn.style.display = 'none'; }
+      } else { chip.style.display = 'none'; }
+
+      function section(sectionId, valueId, value){
+        const sec = el(sectionId);
+        if(value){ sec.style.display = 'block'; el(valueId).textContent = value; }
+        else { sec.style.display = 'none'; }
+      }
+      section('publicBioSection', 'publicProfileBio', data.bio);
+      section('publicEnjoysSection', 'publicProfileEnjoys', data.enjoys);
+      section('publicRecsSection', 'publicProfileRecs', data.recs);
+      section('publicWantSection', 'publicProfileWant', data.wantToWatch);
+
+      const linksWrap = el('publicProfileLinks');
+      linksWrap.innerHTML = '';
+      const linkDefs = [
+        data.website ? { label: '🌐 Website', href: data.website } : null,
+        data.youtube ? { label: '▶️ YouTube', href: data.youtube } : null,
+        data.contactEmail ? { label: '✉️ ' + data.contactEmail, href: 'mailto:' + data.contactEmail } : null,
+        data.discordInvite ? { label: '🎮 Discord', href: data.discordInvite } : null
+      ].filter(Boolean);
+      if(linkDefs.length){
+        el('publicLinksSection').style.display = 'block';
+        linkDefs.forEach(l => {
+          const a = document.createElement('a');
+          a.href = l.href; a.textContent = l.label; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          linksWrap.appendChild(a);
+        });
+      } else { el('publicLinksSection').style.display = 'none'; }
+
+      const actionsWrap = el('publicProfileActions');
+      actionsWrap.innerHTML = '';
+      if(targetUid === currentUser.uid){
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-sm'; editBtn.textContent = '✎ Edit Profile';
+        editBtn.addEventListener('click', () => openProfileScreen(true));
+        actionsWrap.appendChild(editBtn);
+      } else {
+        const isFriend = friends.find(f => f.uid === targetUid);
+        if(isFriend){
+          const tag = document.createElement('span');
+          tag.style.cssText = 'font-size:0.82rem; color: var(--text-dim);';
+          tag.textContent = '🦝 Movie Buddies';
+          actionsWrap.appendChild(tag);
+        } else {
+          const addBtn = document.createElement('button');
+          addBtn.className = 'btn btn-primary btn-sm'; addBtn.textContent = '+ Add Movie Buddy';
+          addBtn.addEventListener('click', () => sendFriendRequestTo(targetUid));
+          actionsWrap.appendChild(addBtn);
+        }
+        if(data.messagePolicy !== 'deny'){
+          const msgBtn = document.createElement('button');
+          msgBtn.className = 'btn btn-sm'; msgBtn.textContent = '✉️ Message'; msgBtn.style.marginLeft = '6px';
+          msgBtn.addEventListener('click', () => openComposeTo(targetUid, data));
+          actionsWrap.appendChild(msgBtn);
+        }
+      }
+    }).catch(err => { el('publicProfileError').textContent = err.message; });
+  }
+  el('backFromProfile').addEventListener('click', () => showApp());
+  el('copyProfileLinkBtn').addEventListener('click', () => {
+    const url = new URL(location.href);
+    url.searchParams.set('u', currentPublicProfileUid || '');
+    const link = url.pathname + '?' + url.searchParams.toString();
+    const fullLink = location.origin + link;
+    if(navigator.clipboard){ navigator.clipboard.writeText(fullLink).catch(() => {}); }
+    showToast('Profile link copied!');
+  });
+
+  /* ---------------- Now Watching ---------------- */
+  const nowWatchingModalOverlay = el('nowWatchingModalOverlay');
+  function updateNowWatchingChip(){
+    const chip = el('nowWatchingChip');
+    if(currentProfile && currentProfile.nowWatching){
+      chip.style.display = 'inline-flex';
+      el('nowWatchingLabel').textContent = '▶️ ' + currentProfile.nowWatching;
+      const discBtn = el('nowWatchingDiscord');
+      if(currentProfile.discordInvite){ discBtn.style.display = 'inline-block'; discBtn.href = currentProfile.discordInvite; }
+      else { discBtn.style.display = 'none'; }
+    } else {
+      chip.style.display = 'none';
+    }
+  }
+  el('setNowWatchingBtn').addEventListener('click', () => {
+    el('nowWatchingListName').textContent = (lists.find(l => l.id === activeListId) || {}).name || 'this list';
+    const select = el('nowWatchingSelect');
+    select.innerHTML = '<option value="">— None —</option>';
+    movies.forEach(m => { if(m.name) select.appendChild(new Option(m.name, m.name)); });
+    el('nowWatchingCustom').value = '';
+    el('nowWatchingError').textContent = '';
+    nowWatchingModalOverlay.classList.add('open');
+  });
+  el('closeNowWatchingModal').addEventListener('click', () => nowWatchingModalOverlay.classList.remove('open'));
+  nowWatchingModalOverlay.addEventListener('click', e => { if(e.target === nowWatchingModalOverlay) nowWatchingModalOverlay.classList.remove('open'); });
+  el('saveNowWatchingBtn').addEventListener('click', () => {
+    const custom = el('nowWatchingCustom').value.trim();
+    const picked = el('nowWatchingSelect').value;
+    const value = custom || picked;
+    if(!value){ el('nowWatchingError').textContent = 'Pick a title or type something.'; return; }
+    db.collection('users').doc(currentUser.uid).update({ nowWatching: value, status: 'watching' }).then(() => {
+      currentProfile.nowWatching = value;
+      currentProfile.status = 'watching';
+      updateNowWatchingChip();
+      updateMyStatusDot();
+      nowWatchingModalOverlay.classList.remove('open');
+      showToast('Now Watching updated!');
+    }).catch(err => { el('nowWatchingError').textContent = err.message; });
+  });
+  el('clearNowWatchingBtn').addEventListener('click', () => {
+    db.collection('users').doc(currentUser.uid).update({ nowWatching: firebase.firestore.FieldValue.delete() }).then(() => {
+      delete currentProfile.nowWatching;
+      updateNowWatchingChip();
+      showToast('Cleared.');
+    });
+  });
+
   /* ---------------- List pills ---------------- */
   function renderListPills(){
     const wrap = el('listPills');
     wrap.innerHTML = '';
+
+    if(lists.length === 0){
+      const hint = document.createElement('span');
+      hint.style.color = 'var(--text-dim)';
+      hint.style.fontSize = '0.85rem';
+      hint.textContent = 'No lists yet — ';
+      wrap.appendChild(hint);
+    }
+
     lists.forEach(list => {
       const pill = document.createElement('div');
       pill.className = 'list-pill' + (list.id === activeListId ? ' active' : '');
@@ -828,15 +1686,60 @@
           input.select();
         });
         pill.appendChild(renameBtn);
+
+        if(list.type === 'shared'){
+          const manageBtn = document.createElement('button');
+          manageBtn.className = 'rename-btn';
+          manageBtn.textContent = '👥';
+          manageBtn.title = 'Add Movie Buddies to this list';
+          manageBtn.addEventListener('click', (e) => { e.stopPropagation(); openManageMembersModal(list); });
+          pill.appendChild(manageBtn);
+        }
+
+        const memberCount = (list.memberUids || []).length;
+        const exitBtn = document.createElement('button');
+        exitBtn.className = 'rename-btn';
+        if(list.type === 'shared' && memberCount > 1){
+          exitBtn.textContent = '🚪';
+          exitBtn.title = 'Leave this shared list';
+          exitBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(confirm(`Leave "${list.name}"? You'll lose access, but the other members keep the list.`)){
+              db.collection('lists').doc(list.id).update({
+                memberUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+              }).then(() => showToast(`You left "${list.name}".`)).catch(err => alert(err.message));
+            }
+          });
+        } else {
+          exitBtn.textContent = '🗑';
+          exitBtn.title = list.type === 'personal' ? 'Delete this list' : 'Delete this list (you\'re the last member)';
+          exitBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(confirm(`Permanently delete "${list.name}" and every movie in it? This can't be undone.`)){
+              deleteListCompletely(list.id);
+            }
+          });
+        }
+        pill.appendChild(exitBtn);
       }
       wrap.appendChild(pill);
     });
 
     const newBtn = document.createElement('button');
     newBtn.className = 'list-pill list-pill-new';
-    newBtn.textContent = '+ New Shared List';
+    newBtn.textContent = '+ New List';
     newBtn.addEventListener('click', openNewListModal);
     wrap.appendChild(newBtn);
+  }
+
+  function deleteListCompletely(listId){
+    const moviesRef = db.collection('lists').doc(listId).collection('movies');
+    moviesRef.get().then(snap => {
+      const batch = db.batch();
+      snap.docs.forEach(d => batch.delete(d.ref));
+      batch.delete(db.collection('lists').doc(listId));
+      return batch.commit();
+    }).then(() => showToast('List deleted.')).catch(err => alert(err.message));
   }
 
   /* ---------------- Movie Buddies modal ---------------- */
@@ -865,18 +1768,26 @@
         row.className = 'request-row';
         const idWrap = document.createElement('div');
         idWrap.className = 'friend-identity';
-        idWrap.innerHTML = `<div class="avatar-circle">${req.fromAvatar || '🎬'}</div><span>${escapeHtml(req.fromName || 'Someone')}</span>`;
+        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml({avatar: req.fromAvatar, avatarType: req.fromAvatarType})}</div><span>${escapeHtml(req.fromName || 'Someone')}</span>`;
         const btns = document.createElement('div');
         const acceptBtn = document.createElement('button');
         acceptBtn.className = 'btn btn-primary btn-sm';
         acceptBtn.textContent = 'Accept';
-        acceptBtn.addEventListener('click', () => acceptRequest(req));
+        acceptBtn.addEventListener('click', () => { acceptRequest(req); showToast('Buddy request accepted!'); });
         const declineBtn = document.createElement('button');
         declineBtn.className = 'btn btn-sm';
         declineBtn.textContent = 'Decline';
         declineBtn.style.marginLeft = '6px';
         declineBtn.addEventListener('click', () => db.collection('friendRequests').doc(req.id).delete());
-        btns.appendChild(acceptBtn); btns.appendChild(declineBtn);
+        const blockReqBtn = document.createElement('button');
+        blockReqBtn.className = 'btn btn-sm';
+        blockReqBtn.textContent = 'Block';
+        blockReqBtn.style.marginLeft = '6px';
+        blockReqBtn.addEventListener('click', () => {
+          db.collection('friendRequests').doc(req.id).delete();
+          blockUser(req.fromUid, req.fromName, req.fromAvatar, req.fromAvatarType);
+        });
+        btns.appendChild(acceptBtn); btns.appendChild(declineBtn); btns.appendChild(blockReqBtn);
         row.appendChild(idWrap); row.appendChild(btns);
         incList.appendChild(row);
       });
@@ -890,8 +1801,48 @@
       friends.forEach(f => {
         const row = document.createElement('div');
         row.className = 'friend-row';
-        row.innerHTML = `<div class="friend-identity"><div class="avatar-circle">${f.avatar}</div><span>${escapeHtml(f.name)}</span></div>`;
+        const idWrap = document.createElement('div');
+        idWrap.className = 'friend-identity';
+        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml(f)}</div><span>${escapeHtml(f.name)}</span>`;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-sm';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          if(confirm(`Remove ${f.name} as a Movie Buddy? They'll stay in any shared lists you already made together.`)){
+            db.collection('friendships').doc(f.docId).delete()
+              .then(() => showToast(`Removed ${f.name} as a Movie Buddy.`))
+              .catch(err => alert(err.message));
+          }
+        });
+        const blockFriendBtn = document.createElement('button');
+        blockFriendBtn.className = 'btn btn-sm';
+        blockFriendBtn.textContent = 'Block';
+        blockFriendBtn.style.marginLeft = '6px';
+        blockFriendBtn.addEventListener('click', () => blockUser(f.uid, f.name, f.avatar, f.avatarType));
+        const btnWrap = document.createElement('div');
+        btnWrap.appendChild(removeBtn); btnWrap.appendChild(blockFriendBtn);
+        row.appendChild(idWrap); row.appendChild(btnWrap);
         listEl.appendChild(row);
+      });
+    }
+
+    const blockedWrap = el('blockedList');
+    blockedWrap.innerHTML = '';
+    if(blockedUsers.length === 0){
+      blockedWrap.innerHTML = '<div class="empty-mini">No blocked users.</div>';
+    } else {
+      blockedUsers.forEach(b => {
+        const row = document.createElement('div');
+        row.className = 'friend-row';
+        const idWrap = document.createElement('div');
+        idWrap.className = 'friend-identity';
+        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml(b)}</div><span>${escapeHtml(b.name || 'User')}</span>`;
+        const unblockBtn = document.createElement('button');
+        unblockBtn.className = 'btn btn-sm';
+        unblockBtn.textContent = 'Unblock';
+        unblockBtn.addEventListener('click', () => unblockUser(b.id, b.name));
+        row.appendChild(idWrap); row.appendChild(unblockBtn);
+        blockedWrap.appendChild(row);
       });
     }
 
@@ -905,8 +1856,8 @@
   function acceptRequest(req){
     const pairId = [currentUser.uid, req.fromUid].sort().join('_');
     const profiles = {};
-    profiles[currentUser.uid] = { name: currentProfile.name, avatar: currentProfile.avatar };
-    profiles[req.fromUid] = { name: req.fromName, avatar: req.fromAvatar };
+    profiles[currentUser.uid] = { name: currentProfile.name, avatar: currentProfile.avatar, avatarType: currentProfile.avatarType || 'emoji' };
+    profiles[req.fromUid] = { name: req.fromName, avatar: req.fromAvatar, avatarType: req.fromAvatarType || 'emoji' };
     db.collection('friendships').doc(pairId).set({ uids: [currentUser.uid, req.fromUid], profiles, createdAt: Date.now() })
       .then(() => db.collection('friendRequests').doc(req.id).delete())
       .catch(err => console.error(err));
@@ -914,36 +1865,68 @@
 
   el('sendRequestBtn').addEventListener('click', () => {
     const msgEl = el('addFriendMsg');
+    msgEl.className = 'error-text';
     msgEl.textContent = '';
     const code = el('addFriendCodeInput').value.trim().toUpperCase();
     if(!code){ msgEl.textContent = 'Enter a code first.'; return; }
     if(code === (currentProfile && currentProfile.friendCode)){ msgEl.textContent = "That's your own code!"; return; }
+    const sendBtn = el('sendRequestBtn');
+    sendBtn.disabled = true;
     db.collection('friendCodes').doc(code).get().then(doc => {
       if(!doc.exists){ msgEl.textContent = 'No Movie Buddy found with that code.'; return; }
       const targetUid = doc.data().uid;
       if(friends.find(f => f.uid === targetUid)){ msgEl.textContent = "You're already Movie Buddies!"; return; }
-      const already = incomingRequests.find(r => r.fromUid === targetUid);
-      if(already){ acceptRequest(already); msgEl.textContent = "You're now Movie Buddies! 🎉"; el('addFriendCodeInput').value=''; return; }
-      db.collection('friendRequests')
-        .where('fromUid', '==', currentUser.uid).where('toUid', '==', targetUid).where('status', '==', 'pending')
-        .get().then(qs => {
-          if(!qs.empty){ msgEl.textContent = 'Request already sent — waiting on them to accept.'; return; }
-          db.collection('friendRequests').add({
-            fromUid: currentUser.uid, fromName: currentProfile.name, fromAvatar: currentProfile.avatar,
-            toUid: targetUid, status: 'pending', createdAt: Date.now()
-          }).then(() => { msgEl.textContent = 'Request sent!'; msgEl.className = 'success-text'; el('addFriendCodeInput').value=''; });
-        });
-    }).catch(err => { msgEl.textContent = err.message; });
+      return Promise.all([
+        db.collection('blocks').doc(`${currentUser.uid}_${targetUid}`).get(),
+        db.collection('blocks').doc(`${targetUid}_${currentUser.uid}`).get()
+      ]).then(([iBlockedThem, theyBlockedMe]) => {
+        if(iBlockedThem.exists){ msgEl.textContent = "You've blocked this user — unblock them first."; return; }
+        if(theyBlockedMe.exists){ msgEl.textContent = "This Movie Buddy request can't be sent."; return; }
+        const already = incomingRequests.find(r => r.fromUid === targetUid);
+        if(already){
+          acceptRequest(already);
+          msgEl.className = 'success-text'; msgEl.textContent = "You're now Movie Buddies! 🎉";
+          showToast('Buddy request accepted!');
+          el('addFriendCodeInput').value = '';
+          return;
+        }
+        return db.collection('friendRequests')
+          .where('fromUid', '==', currentUser.uid).where('toUid', '==', targetUid).where('status', '==', 'pending')
+          .get().then(qs => {
+            if(!qs.empty){ msgEl.textContent = 'Request already sent — waiting on them to accept.'; return; }
+            return db.collection('friendRequests').add({
+              fromUid: currentUser.uid, fromName: currentProfile.name, fromAvatar: currentProfile.avatar, fromAvatarType: currentProfile.avatarType || 'emoji',
+              toUid: targetUid, status: 'pending', createdAt: Date.now()
+            }).then(() => {
+              msgEl.className = 'success-text'; msgEl.textContent = 'Request sent! ✅';
+              showToast('Buddy request sent!');
+              el('addFriendCodeInput').value = '';
+            });
+          });
+      });
+    }).catch(err => { msgEl.className = 'error-text'; msgEl.textContent = err.message; })
+      .finally(() => { sendBtn.disabled = false; });
   });
 
-  /* ---------------- New shared list modal ---------------- */
+  /* ---------------- New list modal (personal or shared) ---------------- */
   const newListModalOverlay = el('newListModalOverlay');
+  let newListType = 'personal';
   function openNewListModal(){
+    newListType = 'personal';
+    document.querySelectorAll('#newListTypeToggle .type-choice').forEach(b => b.classList.toggle('selected', b.dataset.type === 'personal'));
+    el('newListInviteSection').style.display = 'none';
     el('newListNameInput').value = '';
     el('newListError').textContent = '';
     renderNewListCheckboxes();
     newListModalOverlay.classList.add('open');
   }
+  document.querySelectorAll('#newListTypeToggle .type-choice').forEach(btn => {
+    btn.addEventListener('click', () => {
+      newListType = btn.dataset.type;
+      document.querySelectorAll('#newListTypeToggle .type-choice').forEach(b => b.classList.toggle('selected', b === btn));
+      el('newListInviteSection').style.display = newListType === 'shared' ? 'block' : 'none';
+    });
+  });
   el('closeNewListModal').addEventListener('click', () => newListModalOverlay.classList.remove('open'));
   newListModalOverlay.addEventListener('click', e => { if(e.target === newListModalOverlay) newListModalOverlay.classList.remove('open'); });
 
@@ -962,7 +1945,7 @@
       cb.value = f.uid;
       row.appendChild(cb);
       const span = document.createElement('span');
-      span.textContent = `${f.avatar} ${f.name}`;
+      span.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:20px;border-radius:50%;overflow:hidden;display:inline-flex;flex-shrink:0;">${avatarInnerHtml(f)}</span>${escapeHtml(f.name)}</span>`;
       row.appendChild(span);
       wrap.appendChild(row);
     });
@@ -973,13 +1956,95 @@
     const errEl = el('newListError');
     errEl.textContent = '';
     if(!name){ errEl.textContent = 'Please give this list a name.'; return; }
-    const checked = Array.from(document.querySelectorAll('#newListFriendsCheckboxes input:checked')).map(c => c.value);
+    const memberUids = [currentUser.uid];
+    if(newListType === 'shared'){
+      const checked = Array.from(document.querySelectorAll('#newListFriendsCheckboxes input:checked')).map(c => c.value);
+      memberUids.push(...checked);
+    }
     db.collection('lists').add({
-      name, type: 'shared', ownerUid: currentUser.uid, memberUids: [currentUser.uid, ...checked], createdAt: Date.now()
+      name, type: newListType, ownerUid: currentUser.uid, memberUids, createdAt: Date.now()
     }).then(ref => {
       newListModalOverlay.classList.remove('open');
       setActiveList(ref.id);
+      showToast(`"${name}" created!`);
     }).catch(err => { errEl.textContent = err.message; });
+  });
+
+  /* ---------------- Manage members modal (add buddies to an existing shared list) ---------------- */
+  const manageMembersModalOverlay = el('manageMembersModalOverlay');
+  let manageMembersListId = null;
+
+  function openManageMembersModal(list){
+    manageMembersListId = list.id;
+    el('manageMembersListName').textContent = list.name;
+    el('manageMembersError').textContent = '';
+    el('currentMembersList').innerHTML = '<div class="empty-mini">Loading…</div>';
+    el('addMembersCheckboxes').innerHTML = '';
+    manageMembersModalOverlay.classList.add('open');
+
+    const memberUids = list.memberUids || [];
+    Promise.all(memberUids.map(uidVal => db.collection('users').doc(uidVal).get())).then(docs => {
+      const currentWrap = el('currentMembersList');
+      currentWrap.innerHTML = '';
+      docs.forEach(doc => {
+        const data = doc.exists ? doc.data() : { name: 'Unknown', avatar: '🎬' };
+        const row = document.createElement('div');
+        row.className = 'friend-row';
+        const idWrap = document.createElement('div');
+        idWrap.className = 'friend-identity';
+        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml(data)}</div><span>${escapeHtml(data.name || 'Movie Buddy')}${doc.id === currentUser.uid ? ' (you)' : ''}</span>`;
+        row.appendChild(idWrap);
+        if(doc.id !== currentUser.uid && memberUids.length > 1){
+          const removeMemberBtn = document.createElement('button');
+          removeMemberBtn.className = 'btn btn-sm';
+          removeMemberBtn.textContent = 'Remove';
+          removeMemberBtn.addEventListener('click', () => {
+            if(!confirm(`Remove ${data.name || 'this person'} from "${list.name}"?`)) return;
+            db.collection('lists').doc(list.id).update({
+              memberUids: firebase.firestore.FieldValue.arrayRemove(doc.id)
+            }).then(() => {
+              showToast(`Removed ${data.name || 'member'} from the list.`);
+              openManageMembersModal({ ...list, memberUids: memberUids.filter(u => u !== doc.id) });
+            }).catch(err => { el('manageMembersError').textContent = err.message; });
+          });
+          row.appendChild(removeMemberBtn);
+        }
+        currentWrap.appendChild(row);
+      });
+
+      const addWrap = el('addMembersCheckboxes');
+      const invitable = friends.filter(f => !memberUids.includes(f.uid));
+      if(invitable.length === 0){
+        addWrap.innerHTML = '<div class="empty-mini">All your Movie Buddies are already in this list.</div>';
+      } else {
+        addWrap.innerHTML = '';
+        invitable.forEach(f => {
+          const row = document.createElement('label');
+          row.className = 'member-check-row';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox'; cb.value = f.uid;
+          row.appendChild(cb);
+          const span = document.createElement('span');
+          span.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:20px;height:20px;border-radius:50%;overflow:hidden;display:inline-flex;flex-shrink:0;">${avatarInnerHtml(f)}</span>${escapeHtml(f.name)}</span>`;
+          row.appendChild(span);
+          addWrap.appendChild(row);
+        });
+      }
+    }).catch(err => { el('currentMembersList').innerHTML = ''; el('manageMembersError').textContent = err.message; });
+  }
+  el('closeManageMembersModal').addEventListener('click', () => manageMembersModalOverlay.classList.remove('open'));
+  manageMembersModalOverlay.addEventListener('click', e => { if(e.target === manageMembersModalOverlay) manageMembersModalOverlay.classList.remove('open'); });
+
+  el('addMembersBtn').addEventListener('click', () => {
+    const errEl = el('manageMembersError');
+    errEl.textContent = '';
+    const checked = Array.from(document.querySelectorAll('#addMembersCheckboxes input:checked')).map(c => c.value);
+    if(checked.length === 0){ errEl.textContent = 'Pick at least one Movie Buddy to add.'; return; }
+    if(!manageMembersListId) return;
+    db.collection('lists').doc(manageMembersListId).update({
+      memberUids: firebase.firestore.FieldValue.arrayUnion(...checked)
+    }).then(() => { manageMembersModalOverlay.classList.remove('open'); showToast('Movie Buddies added to the list!'); })
+      .catch(err => { errEl.textContent = err.message; });
   });
 
   /* ---------------- Movie CRUD ---------------- */
