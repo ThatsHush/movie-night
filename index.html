@@ -1379,6 +1379,7 @@
       }, err => console.error('requests sync error', err));
   }
 
+  const notificationsModalOverlay = el('notificationsModalOverlay');
   function updateBuddiesBadge(){
     const badge = el('incomingBadge');
     const total = incomingRequests.length + listInvites.length;
@@ -1507,7 +1508,6 @@
   }
 
   const inboxModalOverlay = el('inboxModalOverlay');
-  const notificationsModalOverlay = el('notificationsModalOverlay');
   function showInboxPane(pane){
     el('conversationListView').style.display = pane === 'list' ? 'block' : 'none';
     el('buddyPickerView').style.display = pane === 'picker' ? 'block' : 'none';
