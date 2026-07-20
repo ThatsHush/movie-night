@@ -369,22 +369,37 @@
   .now-watching-clear{ background:none; border:none; color: var(--text-dim); cursor:pointer; font-size:0.9rem; }
 
   /* ---------- Public profile screen ---------- */
-  .profile-page{ max-width: 620px; margin: 0 auto; }
+  .profile-page{ max-width: 620px; margin: 0 auto; padding: 24px 18px 60px; }
   .profile-header-card{
+    position: relative;
     background: var(--bg-panel); border:1px solid var(--border); border-radius:18px; box-shadow: var(--shadow-lg);
-    padding: 26px; display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;
+    padding: 20px 22px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+    overflow: hidden;
   }
-  .profile-header-card .avatar-circle{ width:76px; height:76px; font-size:2.2rem; }
+  .profile-header-card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:5px;
+    background: linear-gradient(92deg, var(--magenta), var(--violet), var(--azure));
+  }
+  .profile-header-card .avatar-circle{ width:64px; height:64px; font-size:1.9rem; flex-shrink:0; }
   .profile-name-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .profile-name-row h2{ margin:0; }
-  .profile-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
-  .profile-section{ margin-top:18px; }
-  .profile-section h4{ margin:0 0 6px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color: var(--text-dim); }
-  .profile-section p{ margin:0; font-size:0.92rem; line-height:1.6; white-space:pre-wrap; }
-  .profile-links{ display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-  .profile-links a{ color: var(--azure); text-decoration:none; font-size:0.85rem; }
-  .profile-links a:hover{ text-decoration:underline; }
-  .back-link{ display:inline-block; margin-bottom:16px; color: var(--text-dim); text-decoration:none; font-size:0.85rem; cursor:pointer; }
+  .profile-name-row h2{ margin:0; font-family:'Bungee', system-ui, sans-serif; font-weight:400; font-size:1.3rem; letter-spacing:0.5px; }
+  .profile-actions{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .profile-section{
+    margin-top:14px; background: var(--bg-panel); border:1px solid var(--border); border-radius:14px;
+    padding: 14px 16px;
+  }
+  .profile-section h4{
+    margin:0 0 8px; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.09em;
+    color: var(--azure); font-weight:700; display:flex; align-items:center; gap:6px;
+  }
+  .profile-section p{ margin:0; font-size:0.94rem; line-height:1.65; white-space:pre-wrap; color: var(--text); }
+  .profile-links{ display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
+  .profile-links a{
+    color: var(--text); text-decoration:none; font-size:0.82rem; background: var(--bg-panel-2);
+    border:1px solid var(--border); border-radius:999px; padding:6px 12px; transition: border-color 0.15s, color 0.15s;
+  }
+  .profile-links a:hover{ border-color: var(--azure); color: var(--azure); }
+  .back-link{ display:inline-block; margin-bottom:14px; color: var(--text-dim); text-decoration:none; font-size:0.85rem; cursor:pointer; }
   .back-link:hover{ color: var(--text); }
 
   /* ---------- Inbox ---------- */
@@ -413,7 +428,9 @@
     .year-input{ width:100%; }
     td.actions-cell{ display:flex; justify-content:flex-end; }
     .avatar-grid{ grid-template-columns: repeat(5, 1fr); }
-    .profile-header-card{ flex-direction:column; align-items:center; text-align:center; }
+    .profile-page{ padding: 18px 14px 50px; }
+    .profile-header-card{ flex-direction:column; align-items:center; text-align:center; padding:22px 16px; }
+    .profile-header-card .avatar-circle{ width:72px; height:72px; font-size:2rem; }
     .profile-actions{ justify-content:center; }
   }
 </style>
@@ -546,6 +563,13 @@
           </div>
           <div class="switch" id="allowMessagesSwitch"><div class="knob"></div></div>
         </div>
+        <div class="toggle-row" id="requireListApprovalRow">
+          <div>
+            <div style="font-size:0.85rem; font-weight:600;">Require my approval before joining a shared list</div>
+            <div class="field-hint">If off, list owners can add you directly.</div>
+          </div>
+          <div class="switch" id="requireListApprovalSwitch"><div class="knob"></div></div>
+        </div>
         <p class="field-hint" style="margin-bottom:14px;">Your email and login details are never shown to other users — only what you fill in above.</p>
       </div>
 
@@ -584,6 +608,7 @@
           <button class="now-watching-clear" id="clearNowWatchingBtn" title="Clear">✕</button>
         </div>
         <button class="btn btn-sm" id="setNowWatchingBtn">▶️ Now Watching</button>
+        <button class="btn buddies-btn" id="bellBtn" title="Alerts">🔔<span class="badge-dot" id="bellBadge">0</span></button>
         <button class="btn buddies-btn" id="inboxBtn">✉️ Inbox<span class="badge-dot" id="inboxBadge">0</span></button>
         <button class="btn buddies-btn" id="buddiesBtn">🦝 Movie Buddies<span class="badge-dot" id="incomingBadge">0</span></button>
       </div>
@@ -656,6 +681,9 @@
 
     <div class="section-label" id="incomingLabel" style="display:none;">Requests</div>
     <div id="incomingRequestsList"></div>
+
+    <div class="section-label" id="listInvitesLabel" style="display:none;">Shared List Invites</div>
+    <div id="listInvitesList"></div>
 
     <div class="section-label">Your Buddies</div>
     <div id="friendsList"></div>
@@ -760,12 +788,22 @@
   </div>
 </div>
 
+<!-- ============ Notifications modal ============ -->
+<div class="modal-overlay" id="notificationsModalOverlay">
+  <div class="modal-card">
+    <h3>🔔 Alerts</h3>
+    <p class="sub">Updates from your shared lists.</p>
+    <div id="notificationsList"></div>
+    <div class="modal-close-row"><button class="btn" id="closeNotificationsModal">Close</button></div>
+  </div>
+</div>
+
 <!-- ============ Public profile screen ============ -->
 <div class="screen" id="publicProfileScreen" style="display:none;">
   <div class="profile-page">
     <p class="back-link" id="backFromProfile">← Back to my lists</p>
     <div class="profile-header-card">
-      <div class="avatar-circle" id="publicProfileAvatar" style="width:76px;height:76px;font-size:2.2rem;"></div>
+      <div class="avatar-circle" id="publicProfileAvatar"></div>
       <div style="flex:1; min-width:200px;">
         <div class="profile-name-row">
           <h2 id="publicProfileName">—</h2>
@@ -780,19 +818,19 @@
     </div>
 
     <div class="profile-section" id="publicBioSection" style="display:none;">
-      <h4>Bio</h4><p id="publicProfileBio"></p>
+      <h4>📝 Bio</h4><p id="publicProfileBio"></p>
     </div>
     <div class="profile-section" id="publicEnjoysSection" style="display:none;">
-      <h4>Enjoys</h4><p id="publicProfileEnjoys"></p>
+      <h4>🎬 Enjoys</h4><p id="publicProfileEnjoys"></p>
     </div>
     <div class="profile-section" id="publicRecsSection" style="display:none;">
-      <h4>Recommendations</h4><p id="publicProfileRecs"></p>
+      <h4>⭐ Recommendations</h4><p id="publicProfileRecs"></p>
     </div>
     <div class="profile-section" id="publicWantSection" style="display:none;">
-      <h4>Wants to watch next</h4><p id="publicProfileWant"></p>
+      <h4>🍿 Wants to watch next</h4><p id="publicProfileWant"></p>
     </div>
     <div class="profile-section" id="publicLinksSection" style="display:none;">
-      <h4>Links</h4>
+      <h4>🔗 Links</h4>
       <div class="profile-links" id="publicProfileLinks"></div>
     </div>
     <div class="profile-section">
@@ -1040,6 +1078,9 @@
     const allowMsgs = !p || p.messagePolicy !== 'deny';
     el('allowMessagesRow').classList.toggle('on', allowMsgs);
     el('allowMessagesSwitch').dataset.allow = allowMsgs ? '1' : '0';
+    const requireApproval = !p || p.requireListApproval !== false;
+    el('requireListApprovalRow').classList.toggle('on', requireApproval);
+    el('requireListApprovalSwitch').dataset.on = requireApproval ? '1' : '0';
 
     avatarMode = (p && p.avatarType === 'dicebear') ? 'dicebear' : 'emoji';
     selectedAvatar = p ? p.avatar : null;
@@ -1059,6 +1100,12 @@
     const row = el('allowMessagesRow');
     const nowOn = this.dataset.allow !== '1';
     this.dataset.allow = nowOn ? '1' : '0';
+    row.classList.toggle('on', nowOn);
+  });
+  el('requireListApprovalSwitch').addEventListener('click', function(){
+    const row = el('requireListApprovalRow');
+    const nowOn = this.dataset.on !== '1';
+    this.dataset.on = nowOn ? '1' : '0';
     row.classList.toggle('on', nowOn);
   });
   el('profileCancelBtn').addEventListener('click', () => showApp());
@@ -1097,6 +1144,7 @@
       youtube: el('profileYoutube').value.trim(),
       discordInvite: el('profileDiscord').value.trim(),
       messagePolicy: el('allowMessagesSwitch').dataset.allow === '0' ? 'deny' : 'allow',
+      requireListApproval: el('requireListApprovalSwitch').dataset.on !== '0',
       avatarType: avatarMode
     };
 
@@ -1147,9 +1195,11 @@
   let friends = [];
   let incomingRequests = [];
   let blockedUsers = [];
+  let listInvites = [];
+  let notifications = [];
   let pendingFocusId = null;
 
-  let listsUnsub = null, moviesUnsub = null, friendshipsUnsub = null, incomingUnsub = null, blockedUnsub = null, sentMsgUnsub = null, receivedMsgUnsub = null;
+  let listsUnsub = null, moviesUnsub = null, friendshipsUnsub = null, incomingUnsub = null, blockedUnsub = null, sentMsgUnsub = null, receivedMsgUnsub = null, listInvitesUnsub = null, notificationsUnsub = null;
   let allMessages = [];
   let activeThreadUid = null;
 
@@ -1247,10 +1297,11 @@
         }
       });
     } else {
-      [listsUnsub, moviesUnsub, friendshipsUnsub, incomingUnsub, blockedUnsub, sentMsgUnsub, receivedMsgUnsub].forEach(u => { try{ u && u(); }catch(e){} });
-      listsUnsub = moviesUnsub = friendshipsUnsub = incomingUnsub = blockedUnsub = sentMsgUnsub = receivedMsgUnsub = null;
+      [listsUnsub, moviesUnsub, friendshipsUnsub, incomingUnsub, blockedUnsub, sentMsgUnsub, receivedMsgUnsub, listInvitesUnsub, notificationsUnsub].forEach(u => { try{ u && u(); }catch(e){} });
+      listsUnsub = moviesUnsub = friendshipsUnsub = incomingUnsub = blockedUnsub = sentMsgUnsub = receivedMsgUnsub = listInvitesUnsub = notificationsUnsub = null;
       currentUser = null; currentProfile = null;
       lists = []; movies = []; friends = []; incomingRequests = []; blockedUsers = []; allMessages = []; activeThreadUid = null;
+      listInvites = []; notifications = [];
       activeListId = null; lastSubscribedListId = undefined;
       updateAuthUI();
       showAuthScreen();
@@ -1265,6 +1316,8 @@
     subscribeIncomingRequests();
     subscribeBlocked();
     subscribeMessages();
+    subscribeListInvites();
+    subscribeNotifications();
   }
 
   function subscribeLists(){
@@ -1328,9 +1381,63 @@
 
   function updateBuddiesBadge(){
     const badge = el('incomingBadge');
-    if(incomingRequests.length > 0){ badge.style.display = 'flex'; badge.textContent = incomingRequests.length; }
+    const total = incomingRequests.length + listInvites.length;
+    if(total > 0){ badge.style.display = 'flex'; badge.textContent = total; }
     else { badge.style.display = 'none'; }
   }
+
+  function subscribeListInvites(){
+    if(listInvitesUnsub) listInvitesUnsub();
+    listInvitesUnsub = db.collection('listInvites')
+      .where('toUid', '==', currentUser.uid).where('status', '==', 'pending')
+      .onSnapshot(snap => {
+        listInvites = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        updateBuddiesBadge();
+        renderFriendsUI();
+      }, err => console.error('list invites sync error', err));
+  }
+
+  const NOTIF_LABELS = {
+    movies: list => `"${list}" was updated by a Movie Buddy.`,
+    buddy_left: list => `A Movie Buddy left "${list}".`,
+    removed_from_list: list => `You were removed from "${list}".`
+  };
+  function subscribeNotifications(){
+    if(notificationsUnsub) notificationsUnsub();
+    notificationsUnsub = db.collection('notifications')
+      .where('uid', '==', currentUser.uid).where('read', '==', false)
+      .onSnapshot(snap => {
+        notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        updateBellBadge();
+        if(notificationsModalOverlay.classList.contains('open')) renderNotifications();
+      }, err => console.error('notifications sync error', err));
+  }
+  function updateBellBadge(){
+    const badge = el('bellBadge');
+    if(notifications.length > 0){ badge.style.display = 'flex'; badge.textContent = notifications.length; }
+    else { badge.style.display = 'none'; }
+  }
+  function renderNotifications(){
+    const wrap = el('notificationsList');
+    wrap.innerHTML = '';
+    if(notifications.length === 0){ wrap.innerHTML = '<div class="empty-mini">No new alerts.</div>'; return; }
+    notifications.slice().sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0)).forEach(n => {
+      const row = document.createElement('div');
+      row.className = 'friend-row';
+      row.style.cursor = 'pointer';
+      const labelFn = NOTIF_LABELS[n.type];
+      row.innerHTML = `<div class="friend-identity"><span>${labelFn ? labelFn(n.listName) : 'List update'}</span></div>`;
+      row.addEventListener('click', () => {
+        db.collection('notifications').doc(n.id).delete().catch(() => {});
+        if(n.type === 'movies' && lists.find(l => l.id === n.listId)){ setActiveList(n.listId); }
+        notificationsModalOverlay.classList.remove('open');
+      });
+      wrap.appendChild(row);
+    });
+  }
+  el('bellBtn').addEventListener('click', () => { notificationsModalOverlay.classList.add('open'); renderNotifications(); });
+  el('closeNotificationsModal').addEventListener('click', () => notificationsModalOverlay.classList.remove('open'));
+  notificationsModalOverlay.addEventListener('click', e => { if(e.target === notificationsModalOverlay) notificationsModalOverlay.classList.remove('open'); });
 
   function subscribeBlocked(){
     if(blockedUnsub) blockedUnsub();
@@ -1400,6 +1507,7 @@
   }
 
   const inboxModalOverlay = el('inboxModalOverlay');
+  const notificationsModalOverlay = el('notificationsModalOverlay');
   function showInboxPane(pane){
     el('conversationListView').style.display = pane === 'list' ? 'block' : 'none';
     el('buddyPickerView').style.display = pane === 'picker' ? 'block' : 'none';
@@ -1475,15 +1583,22 @@
       });
     });
   }
+  function friendlyMessageError(err){
+    if(err && err.code === 'permission-denied') return "Couldn't send — this person may have messages turned off right now.";
+    return (err && err.message) || 'Something went wrong sending that message. Please try again.';
+  }
   el('threadReplyBtn').addEventListener('click', () => {
     const body = el('threadReplyInput').value.trim();
     const errEl = el('threadError');
     errEl.textContent = '';
-    if(!body || !activeThreadUid) return;
-    el('threadReplyBtn').disabled = true;
-    sendMessageTo(activeThreadUid, body).then(() => { el('threadReplyInput').value = ''; })
-      .catch(err => { errEl.textContent = err.message; })
-      .finally(() => { el('threadReplyBtn').disabled = false; });
+    if(!activeThreadUid){ errEl.textContent = 'No conversation selected — go back and pick someone to message.'; return; }
+    if(!body) return;
+    const btn = el('threadReplyBtn');
+    btn.disabled = true;
+    Promise.resolve().then(() => sendMessageTo(activeThreadUid, body))
+      .then(() => { el('threadReplyInput').value = ''; })
+      .catch(err => { console.error('send message failed', err); errEl.textContent = friendlyMessageError(err); })
+      .finally(() => { btn.disabled = false; });
   });
   el('threadReplyInput').addEventListener('keydown', e => { if(e.key === 'Enter') el('threadReplyBtn').click(); });
 
@@ -1734,7 +1849,10 @@
             if(confirm(`Leave "${list.name}"? You'll lose access, but the other members keep the list.`)){
               db.collection('lists').doc(list.id).update({
                 memberUids: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
-              }).then(() => showToast(`You left "${list.name}".`)).catch(err => alert(err.message));
+              }).then(() => {
+                notifyListEvent(list, 'buddy_left', (list.memberUids || []).filter(u => u !== currentUser.uid));
+                showToast(`You left "${list.name}".`);
+              }).catch(err => alert(err.message));
             }
           });
         } else {
@@ -1817,6 +1935,39 @@
         btns.appendChild(acceptBtn); btns.appendChild(declineBtn); btns.appendChild(blockReqBtn);
         row.appendChild(idWrap); row.appendChild(btns);
         incList.appendChild(row);
+      });
+    }
+
+    const invLabel = el('listInvitesLabel');
+    const invList = el('listInvitesList');
+    invList.innerHTML = '';
+    if(listInvites.length === 0){ invLabel.style.display = 'none'; }
+    else {
+      invLabel.style.display = 'block';
+      listInvites.forEach(inv => {
+        const row = document.createElement('div');
+        row.className = 'request-row';
+        const idWrap = document.createElement('div');
+        idWrap.className = 'friend-identity';
+        idWrap.innerHTML = `<div class="avatar-circle">🎬</div><span><b>${escapeHtml(inv.fromName || 'Someone')}</b> invited you to "${escapeHtml(inv.listName || 'a list')}"</span>`;
+        const btns = document.createElement('div');
+        const acceptBtn = document.createElement('button');
+        acceptBtn.className = 'btn btn-primary btn-sm';
+        acceptBtn.textContent = 'Accept';
+        acceptBtn.addEventListener('click', () => {
+          db.collection('lists').doc(inv.listId).update({ memberUids: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) })
+            .then(() => db.collection('listInvites').doc(inv.id).delete())
+            .then(() => showToast(`Joined "${inv.listName}"!`))
+            .catch(err => showToast(err.message));
+        });
+        const declineBtn = document.createElement('button');
+        declineBtn.className = 'btn btn-sm';
+        declineBtn.textContent = 'Decline';
+        declineBtn.style.marginLeft = '6px';
+        declineBtn.addEventListener('click', () => db.collection('listInvites').doc(inv.id).delete());
+        btns.appendChild(acceptBtn); btns.appendChild(declineBtn);
+        row.appendChild(idWrap); row.appendChild(btns);
+        invList.appendChild(row);
       });
     }
 
@@ -1986,22 +2137,39 @@
     });
   }
 
+  function inviteOrAddToList(listId, listName, uids){
+    return Promise.all(uids.map(uidVal =>
+      db.collection('users').doc(uidVal).get().then(doc => {
+        const requiresApproval = !doc.exists || doc.data().requireListApproval !== false;
+        if(requiresApproval){
+          return db.collection('listInvites').doc(`${listId}_${uidVal}`).set({
+            listId, listName, fromUid: currentUser.uid, fromName: currentProfile.name,
+            toUid: uidVal, status: 'pending', createdAt: Date.now()
+          });
+        }
+        return db.collection('lists').doc(listId).update({ memberUids: firebase.firestore.FieldValue.arrayUnion(uidVal) });
+      })
+    ));
+  }
+
   el('createListBtn').addEventListener('click', () => {
     const name = el('newListNameInput').value.trim();
     const errEl = el('newListError');
     errEl.textContent = '';
     if(!name){ errEl.textContent = 'Please give this list a name.'; return; }
-    const memberUids = [currentUser.uid];
-    if(newListType === 'shared'){
-      const checked = Array.from(document.querySelectorAll('#newListFriendsCheckboxes input:checked')).map(c => c.value);
-      memberUids.push(...checked);
-    }
+    const checked = newListType === 'shared'
+      ? Array.from(document.querySelectorAll('#newListFriendsCheckboxes input:checked')).map(c => c.value)
+      : [];
     db.collection('lists').add({
-      name, type: newListType, ownerUid: currentUser.uid, memberUids, createdAt: Date.now()
+      name, type: newListType, ownerUid: currentUser.uid, memberUids: [currentUser.uid], createdAt: Date.now()
     }).then(ref => {
       newListModalOverlay.classList.remove('open');
       setActiveList(ref.id);
-      showToast(`"${name}" created!`);
+      if(checked.length > 0){
+        inviteOrAddToList(ref.id, name, checked).then(() => showToast('List created — invites sent to your buddies!'));
+      } else {
+        showToast(`"${name}" created!`);
+      }
     }).catch(err => { errEl.textContent = err.message; });
   });
 
@@ -2015,6 +2183,8 @@
     el('manageMembersError').textContent = '';
     el('currentMembersList').innerHTML = '<div class="empty-mini">Loading…</div>';
     el('addMembersCheckboxes').innerHTML = '';
+    const isOwner = list.ownerUid === currentUser.uid;
+    el('addMembersBtn').style.display = isOwner ? 'inline-block' : 'none';
     manageMembersModalOverlay.classList.add('open');
 
     const memberUids = list.memberUids || [];
@@ -2027,9 +2197,9 @@
         row.className = 'friend-row';
         const idWrap = document.createElement('div');
         idWrap.className = 'friend-identity';
-        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml(data)}</div><span>${escapeHtml(data.name || 'Movie Buddy')}${doc.id === currentUser.uid ? ' (you)' : ''}</span>`;
+        idWrap.innerHTML = `<div class="avatar-circle">${avatarInnerHtml(data)}</div><span>${escapeHtml(data.name || 'Movie Buddy')}${doc.id === currentUser.uid ? ' (you)' : ''}${doc.id === list.ownerUid ? ' 👑' : ''}</span>`;
         row.appendChild(idWrap);
-        if(doc.id !== currentUser.uid && memberUids.length > 1){
+        if(isOwner && doc.id !== currentUser.uid && memberUids.length > 1){
           const removeMemberBtn = document.createElement('button');
           removeMemberBtn.className = 'btn btn-sm';
           removeMemberBtn.textContent = 'Remove';
@@ -2038,6 +2208,7 @@
             db.collection('lists').doc(list.id).update({
               memberUids: firebase.firestore.FieldValue.arrayRemove(doc.id)
             }).then(() => {
+              notifyListEvent(list, 'removed_from_list', [doc.id]);
               showToast(`Removed ${data.name || 'member'} from the list.`);
               openManageMembersModal({ ...list, memberUids: memberUids.filter(u => u !== doc.id) });
             }).catch(err => { el('manageMembersError').textContent = err.message; });
@@ -2048,6 +2219,10 @@
       });
 
       const addWrap = el('addMembersCheckboxes');
+      if(!isOwner){
+        addWrap.innerHTML = '<div class="empty-mini">Only the list owner can add or remove Movie Buddies.</div>';
+        return;
+      }
       const invitable = friends.filter(f => !memberUids.includes(f.uid));
       if(invitable.length === 0){
         addWrap.innerHTML = '<div class="empty-mini">All your Movie Buddies are already in this list.</div>';
@@ -2076,9 +2251,9 @@
     const checked = Array.from(document.querySelectorAll('#addMembersCheckboxes input:checked')).map(c => c.value);
     if(checked.length === 0){ errEl.textContent = 'Pick at least one Movie Buddy to add.'; return; }
     if(!manageMembersListId) return;
-    db.collection('lists').doc(manageMembersListId).update({
-      memberUids: firebase.firestore.FieldValue.arrayUnion(...checked)
-    }).then(() => { manageMembersModalOverlay.classList.remove('open'); showToast('Movie Buddies added to the list!'); })
+    const list = lists.find(l => l.id === manageMembersListId);
+    inviteOrAddToList(manageMembersListId, list ? list.name : 'Shared List', checked)
+      .then(() => { manageMembersModalOverlay.classList.remove('open'); showToast('Invite sent — they need to accept to join.'); })
       .catch(err => { errEl.textContent = err.message; });
   });
 
@@ -2102,6 +2277,19 @@
     clearTimeout(debounceTimers[key]);
     debounceTimers[key] = setTimeout(() => persistMovie(movie), 500);
   }
+  function notifyListEvent(list, type, targetUids){
+    (targetUids || []).forEach(uidVal => {
+      if(!uidVal || uidVal === currentUser.uid) return;
+      db.collection('notifications').doc(`${uidVal}_${list.id}_${type}`).set({
+        uid: uidVal, listId: list.id, listName: list.name, type, read: false, updatedAt: Date.now()
+      }, { merge: true }).catch(err => console.error('notify failed', err));
+    });
+  }
+  function notifyActiveListMoviesChanged(){
+    const list = lists.find(l => l.id === activeListId);
+    if(!list || list.type !== 'shared') return;
+    notifyListEvent(list, 'movies', (list.memberUids || []).filter(u => u !== currentUser.uid));
+  }
   function persistMovie(movie){
     if(!activeListId) return;
     const payload = {
@@ -2109,10 +2297,12 @@
       year: movie.year || '', watched: !!movie.watched, createdAt: movie.createdAt || Date.now()
     };
     db.collection('lists').doc(activeListId).collection('movies').doc(movie.id).set(payload, { merge: true }).catch(e => console.error(e));
+    notifyActiveListMoviesChanged();
   }
   function deleteMovie(id){
     if(!activeListId) return;
     db.collection('lists').doc(activeListId).collection('movies').doc(id).delete().catch(e => console.error(e));
+    notifyActiveListMoviesChanged();
   }
   function addMovie(){
     if(!activeListId) return;
