@@ -776,7 +776,10 @@
       <div id="buddyPickerList"></div>
     </div>
     <div id="threadView" style="display:none;">
-      <p class="back-link" id="backToConversations">← Back to Inbox</p>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <p class="back-link" id="backToConversations" style="margin-bottom:14px;">← Back to Inbox</p>
+        <button class="btn btn-sm" id="deleteThreadBtn" title="Delete this conversation">🗑 Delete</button>
+      </div>
       <div class="thread-messages" id="threadMessages"></div>
       <div class="msg-reply-row">
         <input type="text" id="threadReplyInput" placeholder="Type a message…" maxlength="500">
@@ -1483,8 +1486,11 @@
     }, err => console.error('received messages sync error', err));
   }
 
+  function visibleMessages(){
+    return allMessages.filter(m => !(m.hiddenFor || []).includes(currentUser.uid));
+  }
   function updateInboxBadge(){
-    const unreadCount = allMessages.filter(m => m.toUid === currentUser.uid && !m.read).length;
+    const unreadCount = visibleMessages().filter(m => m.toUid === currentUser.uid && !m.read).length;
     const badge = el('inboxBadge');
     if(unreadCount > 0){ badge.style.display = 'flex'; badge.textContent = unreadCount; }
     else { badge.style.display = 'none'; }
@@ -1492,7 +1498,7 @@
 
   function conversationPartners(){
     const map = {};
-    allMessages.forEach(m => {
+    visibleMessages().forEach(m => {
       const otherUid = m.fromUid === currentUser.uid ? m.toUid : m.fromUid;
       const otherName = m.fromUid === currentUser.uid ? m.toName : m.fromName;
       const otherAvatar = m.fromUid === currentUser.uid ? m.toAvatar : m.fromAvatar;
@@ -1502,7 +1508,7 @@
       }
     });
     Object.keys(map).forEach(uidKey => {
-      map[uidKey].unread = allMessages.some(m => m.fromUid === uidKey && m.toUid === currentUser.uid && !m.read);
+      map[uidKey].unread = visibleMessages().some(m => m.fromUid === uidKey && m.toUid === currentUser.uid && !m.read);
     });
     return Object.values(map).sort((a,b) => b.lastAt - a.lastAt);
   }
@@ -1523,9 +1529,17 @@
     partners.forEach(p => {
       const row = document.createElement('div');
       row.className = 'friend-row';
-      row.style.cursor = 'pointer';
-      row.innerHTML = `<div class="friend-identity"><div class="avatar-circle" style="width:32px;height:32px;font-size:1rem;">${avatarInnerHtml(p)}</div><span>${escapeHtml(p.name)}${p.unread ? ' 🔵' : ''}</span></div>`;
-      row.addEventListener('click', () => openThread(p.uid, p.name, p.avatar));
+      const idWrap = document.createElement('div');
+      idWrap.className = 'friend-identity';
+      idWrap.style.cursor = 'pointer';
+      idWrap.innerHTML = `<div class="avatar-circle" style="width:32px;height:32px;font-size:1rem;">${avatarInnerHtml(p)}</div><span>${escapeHtml(p.name)}${p.unread ? ' 🔵' : ''}</span>`;
+      idWrap.addEventListener('click', () => openThread(p.uid, p.name, p.avatar));
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-sm';
+      delBtn.textContent = '🗑';
+      delBtn.title = 'Delete conversation';
+      delBtn.addEventListener('click', () => deleteThread(p.uid));
+      row.appendChild(idWrap); row.appendChild(delBtn);
       wrap.appendChild(row);
     });
   }
@@ -1559,7 +1573,7 @@
   function renderThread(otherUid){
     const wrap = el('threadMessages');
     wrap.innerHTML = '';
-    const thread = allMessages.filter(m => m.fromUid === otherUid || m.toUid === otherUid);
+    const thread = visibleMessages().filter(m => m.fromUid === otherUid || m.toUid === otherUid);
     if(thread.length === 0){ wrap.innerHTML = '<div class="empty-mini">No messages yet — say hi!</div>'; }
     thread.forEach(m => {
       const bubble = document.createElement('div');
@@ -1569,6 +1583,22 @@
     });
     wrap.scrollTop = wrap.scrollHeight;
   }
+  function deleteThread(otherUid){
+    const thread = allMessages.filter(m => m.fromUid === otherUid || m.toUid === otherUid);
+    if(thread.length === 0){ return; }
+    if(!confirm('Delete this conversation from your inbox? The other person will still have their copy.')) return;
+    const batch = db.batch();
+    thread.forEach(m => {
+      batch.update(db.collection('messages').doc(m.id), { hiddenFor: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+    });
+    batch.commit().then(() => {
+      activeThreadUid = null;
+      showToast('Conversation deleted.');
+      showInboxPane('list');
+      renderInbox();
+    }).catch(err => alert(friendlyMessageError(err)));
+  }
+  el('deleteThreadBtn').addEventListener('click', () => { if(activeThreadUid) deleteThread(activeThreadUid); });
   el('backToConversations').addEventListener('click', () => { activeThreadUid = null; el('inboxTitle').textContent = '✉️ Inbox'; renderInbox(); });
 
   function sendMessageTo(targetUid, body){
@@ -1579,7 +1609,7 @@
       return db.collection('messages').add({
         fromUid: currentUser.uid, fromName: currentProfile.name, fromAvatar: currentProfile.avatar, fromAvatarType: currentProfile.avatarType || 'emoji',
         toUid: targetUid, toName: targetData.name || 'User', toAvatar: targetData.avatar || '🎬', toAvatarType: targetData.avatarType || 'emoji',
-        body, read: false, createdAt: Date.now()
+        body, read: false, hiddenFor: [], createdAt: Date.now()
       });
     });
   }
@@ -1723,7 +1753,19 @@
           actionsWrap.appendChild(msgBtn);
         }
       }
-    }).catch(err => { el('publicProfileError').textContent = err.message; });
+    }).catch(err => {
+      el('publicProfileName').textContent = 'Couldn\'t load this profile';
+      el('publicProfileAvatar').innerHTML = '⚠️';
+      el('publicProfileActions').innerHTML = '';
+      const retryBtn = document.createElement('button');
+      retryBtn.className = 'btn btn-sm';
+      retryBtn.textContent = '↻ Retry';
+      retryBtn.addEventListener('click', () => renderPublicProfile(targetUid));
+      el('publicProfileActions').appendChild(retryBtn);
+      el('publicProfileError').textContent = (err && err.code === 'permission-denied')
+        ? 'Connection was blocked (often caused by an ad blocker or privacy extension) — try disabling it for this site, or tap Retry.'
+        : (err && err.message) || 'Something went wrong loading this profile.';
+    });
   }
   el('backFromProfile').addEventListener('click', () => showApp());
   el('copyProfileLinkBtn').addEventListener('click', () => {
