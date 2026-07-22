@@ -232,6 +232,22 @@
   .imdb-link:hover{ text-decoration:underline; opacity:1; }
   .imdb-link-disabled{ pointer-events:none; opacity:0.25; }
 
+  .title-suggest-wrap{ position:relative; }
+  .title-suggestions{
+    position:absolute; top:100%; left:0; right:0; z-index:25;
+    background: var(--bg-panel); border:1px solid var(--border); border-radius:10px;
+    box-shadow: var(--shadow-lg); margin-top:4px; max-height:280px; overflow-y:auto; display:none;
+  }
+  .title-suggestions.show{ display:block; }
+  .title-suggest-item{
+    padding:9px 12px; cursor:pointer; font-size:0.85rem; display:flex; justify-content:space-between;
+    align-items:center; gap:8px; border-bottom:1px solid var(--border); color: var(--text);
+  }
+  .title-suggest-item:last-child{ border-bottom:none; }
+  .title-suggest-item:hover{ background: var(--bg-panel-2); }
+  .title-suggest-item .yr{ color: var(--text-dim); font-size:0.76rem; flex-shrink:0; }
+  .title-suggest-loading{ padding:9px 12px; font-size:0.8rem; color: var(--text-dim); }
+
   select.cell-input{
     appearance:none; -webkit-appearance:none; cursor:pointer;
     background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
@@ -852,6 +868,29 @@
 (function(){
   const GENRES = ['Comedy','Horror','Romance','Drama','Documentary','Thriller','Action','Sci-Fi','Fantasy','Mystery','Animation','Musical','Adventure','Crime','Family','War','Western','Biography'];
   const AVATARS = ['🦊','🐼','🦝','🐨','🦁','🐯','🐸','🐙','🦄','🐰','🐻','🐧','🦖','🐲','👽','🤖','🎃','😺','🐵','🦔','🐢','🦋','🍿','🎬','🎭','⭐','🌈','🍩','🍕','☕'];
+
+  /* =========================================================
+     TMDB SETUP (optional) — paste a free API key from
+     themoviedb.org to turn on movie title autocomplete.
+     Leave as-is to skip this feature entirely.
+     ========================================================= */
+  const TMDB_API_KEY = "93d538c34be4d6ac845d458170022f17";
+  const TMDB_CONFIGURED = !!(TMDB_API_KEY && TMDB_API_KEY !== "YOUR_TMDB_API_KEY");
+  const TMDB_GENRE_MAP = {
+    28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime',
+    99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History',
+    27: 'Horror', 10402: 'Musical', 9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi',
+    10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western'
+  };
+  function tmdbSearchMovies(query){
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&include_adult=false`;
+    return fetch(url).then(r => r.ok ? r.json() : Promise.reject(new Error('TMDb search failed')))
+      .then(data => (data.results || []).slice(0, 6));
+  }
+  function tmdbGetDetails(movieId){
+    const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
+    return fetch(url).then(r => r.ok ? r.json() : Promise.reject(new Error('TMDb details failed')));
+  }
   const THEME_KEY = 'movieNightRoundup.theme';
   const ACTIVE_LIST_KEY = 'movieNightRoundup.activeListId';
   const SORT_KEY = 'movieNightRoundup.sortMode';
@@ -2431,6 +2470,8 @@
     // Movie name + IMDb link
     const tdName = document.createElement('td');
     tdName.dataset.label = 'Movie';
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'title-suggest-wrap';
     const nameInput = document.createElement('textarea');
     nameInput.className = 'cell-input movie-name-input';
     nameInput.rows = 1;
@@ -2442,16 +2483,73 @@
     imdbLink.target = '_blank'; imdbLink.rel = 'noopener noreferrer';
     imdbLink.textContent = '🔗 IMDb';
     imdbLink.href = buildImdbUrl(movie);
+    const suggestBox = document.createElement('div');
+    suggestBox.className = 'title-suggestions';
+    let suggestTimer = null;
+    function hideSuggestions(){ suggestBox.classList.remove('show'); suggestBox.innerHTML = ''; }
+    function applySuggestion(result){
+      hideSuggestions();
+      movie.name = result.title || movie.name;
+      nameInput.value = movie.name;
+      autoResize(nameInput);
+      imdbLink.href = buildImdbUrl(movie);
+      imdbLink.classList.toggle('imdb-link-disabled', !movie.name.trim());
+      const year = (result.release_date || '').slice(0, 4);
+      if(year){ movie.year = year; yearInput.value = year; }
+      persistMovie(movie);
+      tmdbGetDetails(result.id).then(details => {
+        const cast = ((details.credits && details.credits.cast) || []).slice(0, 4).map(c => c.name).filter(Boolean);
+        if(cast.length){
+          movie.starring = cast.join(', ');
+          starInput.value = movie.starring;
+          autoResize(starInput);
+        }
+        const genreName = details.genres && details.genres[0] ? (TMDB_GENRE_MAP[details.genres[0].id] || details.genres[0].name) : null;
+        if(genreName){
+          movie.genre = genreName;
+          const isPresetNow = GENRES.includes(genreName);
+          if(isPresetNow){ genreSelect.value = genreName; genreCustom.style.display = 'none'; }
+          else { genreSelect.value = '__custom__'; genreCustom.value = genreName; genreCustom.style.display = 'block'; }
+        }
+        persistMovie(movie);
+      }).catch(() => { persistMovie(movie); });
+    }
+    function renderSuggestions(results){
+      suggestBox.innerHTML = '';
+      if(!results || results.length === 0){ hideSuggestions(); return; }
+      results.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'title-suggest-item';
+        const yr = (r.release_date || '').slice(0, 4);
+        item.innerHTML = `<span>${escapeHtml(r.title || '')}</span><span class="yr">${yr}</span>`;
+        item.addEventListener('mousedown', e => { e.preventDefault(); applySuggestion(r); });
+        suggestBox.appendChild(item);
+      });
+      suggestBox.classList.add('show');
+    }
     nameInput.addEventListener('input', () => {
       autoResize(nameInput);
       movie.name = nameInput.value;
       imdbLink.href = buildImdbUrl(movie);
       imdbLink.classList.toggle('imdb-link-disabled', !movie.name.trim());
       schedulePersist(movie, 'name');
+      if(TMDB_CONFIGURED){
+        clearTimeout(suggestTimer);
+        const q = nameInput.value.trim();
+        if(q.length < 2){ hideSuggestions(); return; }
+        suggestBox.innerHTML = '<div class="title-suggest-loading">Searching…</div>';
+        suggestBox.classList.add('show');
+        suggestTimer = setTimeout(() => {
+          tmdbSearchMovies(q).then(renderSuggestions).catch(() => hideSuggestions());
+        }, 400);
+      }
     });
-    nameInput.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); nameInput.blur(); } });
-    tdName.appendChild(nameInput);
-    tdName.appendChild(imdbLink);
+    nameInput.addEventListener('blur', () => { setTimeout(hideSuggestions, 150); });
+    nameInput.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); nameInput.blur(); } if(e.key === 'Escape'){ hideSuggestions(); } });
+    titleWrap.appendChild(nameInput);
+    titleWrap.appendChild(imdbLink);
+    titleWrap.appendChild(suggestBox);
+    tdName.appendChild(titleWrap);
 
     // Starring
     const tdStar = document.createElement('td');
