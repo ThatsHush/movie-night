@@ -2419,6 +2419,9 @@
     if(typeof info.selStart === 'number' && typeof target.setSelectionRange === 'function'){
       try{ target.setSelectionRange(info.selStart, info.selEnd); }catch(e){}
     }
+    if(info.field === 'name' && typeof target.runSuggestSearch === 'function'){
+      target.runSuggestSearch();
+    }
   }
   function autoResize(elm){ elm.style.height = 'auto'; elm.style.height = elm.scrollHeight + 'px'; }
 
@@ -2527,6 +2530,15 @@
       });
       suggestBox.classList.add('show');
     }
+    function runSearchNow(){
+      if(!TMDB_CONFIGURED) return;
+      const q = nameInput.value.trim();
+      if(q.length < 2){ hideSuggestions(); return; }
+      suggestBox.innerHTML = '<div class="title-suggest-loading">Searching…</div>';
+      suggestBox.classList.add('show');
+      tmdbSearchMovies(q).then(renderSuggestions).catch(() => hideSuggestions());
+    }
+    nameInput.runSuggestSearch = runSearchNow;
     nameInput.addEventListener('input', () => {
       autoResize(nameInput);
       movie.name = nameInput.value;
@@ -2539,9 +2551,7 @@
         if(q.length < 2){ hideSuggestions(); return; }
         suggestBox.innerHTML = '<div class="title-suggest-loading">Searching…</div>';
         suggestBox.classList.add('show');
-        suggestTimer = setTimeout(() => {
-          tmdbSearchMovies(q).then(renderSuggestions).catch(() => hideSuggestions());
-        }, 400);
+        suggestTimer = setTimeout(runSearchNow, 400);
       }
     });
     nameInput.addEventListener('blur', () => { setTimeout(hideSuggestions, 150); });
